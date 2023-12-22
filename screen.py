@@ -33,13 +33,21 @@ class hitbox:
     def get_size_y (self) :
         return self.size_y
     
+    def set_color (self, new_color:tuple) :
+        self.color = new_color
     def get_color (self) :
         return self.color
+    
+    def rect (self):
+        return pygame.Rect(self.start_x, self.start_y, self.size_x, self.size_y)
 
 def afficher_hitbox(current:object) :
     pygame.draw.rect(screen, current.get_color(), (current.get_start_x(), current.get_start_y(), current.get_size_x(), current.get_size_y()))
 
-
+def check_collision(obj1: object, obj2: object) -> bool:
+    rect1 = pygame.Rect(obj1.get_start_x(), obj1.get_start_y(), obj1.get_size_x(), obj1.get_size_y())
+    rect2 = pygame.Rect(obj2.get_start_x(), obj2.get_start_y(), obj2.get_size_x(), obj2.get_size_y())
+    return rect1.colliderect(rect2)
 
 
 
@@ -94,13 +102,22 @@ while running:
         Player.move_start_y(-PYGAME_SPEED)
     # Si la touche fléchée bas est pressée, déplacer le carré vers le bas
     if keys[pygame.K_s]:
-        Player.move_start_y(PYGAME_SPEED)
+        if check_collision(Player, Floor):
+            pass
+        else :
+            Player.move_start_y(PYGAME_SPEED)
 
     # Gérer les événements
     for event in pygame.event.get():
         # Si l'événement est de type QUIT, sortir de la boucle
         if event.type == pygame.QUIT:
             running = False
+
+
+    if check_collision(Player, Floor):
+        Player.set_color((0, 0, 255))
+    else :
+        Player.set_color((255, 0, 0))
 
     time.sleep(0.01)
 
