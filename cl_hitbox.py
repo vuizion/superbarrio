@@ -61,6 +61,15 @@ class hitbox:
         if (self.canJump) and (moreThanHalfJump) and (self.num_jump > 0):
             return True
         return False
+    
+    def check_jump_without_num(self, currentTick:int) -> bool:
+        moreThanHalfJump = False
+        if self.tick_start_jump + int((self.tick_end_jump - self.tick_start_jump) / 2) <= currentTick:
+            moreThanHalfJump = True
+
+        if (self.canJump) and (moreThanHalfJump):
+            return True
+        return False
 
     def create_jump (self, currentTick:int):
         if self.check_jump(currentTick):
@@ -68,7 +77,9 @@ class hitbox:
             self.tick_end_jump = currentTick + d_tick_delay_jump
             self.num_jump -= 1
 
-    
+    def reset_num_jump(self):
+        self.num_jump = d_max_jump
+
     def affiche(self, screen, currentTick:int, PYGAME_SPEED=0):
         if self.canJump and self.tick_end_jump >= currentTick:
             jumpSpeed = -PYGAME_SPEED * (self.tick_end_jump - currentTick) / (self.tick_end_jump - self.tick_start_jump)
