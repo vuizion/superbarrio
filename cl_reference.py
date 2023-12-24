@@ -27,11 +27,6 @@ class reference:
 
         for oneMoving in everyMoving:
             isFalling = True
-            """
-            for oneFixed in everyFixed:
-                if oneMoving.check_collision(oneFixed):
-                    isFalling = False
-                    """
 
             if self.every_collision(oneMoving, 'b'):
                 isFalling = False
