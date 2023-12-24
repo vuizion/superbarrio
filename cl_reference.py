@@ -21,17 +21,79 @@ class reference:
     def get_fixed_as(self, key:str):
         return self.fixed[key]
     
-    def gravity(self, currentTick:int):
+    def gravity(self, currentTick:int, PYGAME_SPEED):
         everyMoving = sum(self.moving.values(), [])
         everyFixed = sum(self.fixed.values(), [])
 
         for oneMoving in everyMoving:
             isFalling = True
+            """
             for oneFixed in everyFixed:
                 if oneMoving.check_collision(oneFixed):
                     isFalling = False
+                    """
+
+            if self.every_collision(oneMoving, 'b'):
+                isFalling = False
+
+            if oneMoving.check_jump_without_num(currentTick):
+                pass
+            else:
+                isFalling = False
+
 
             if isFalling:
-                oneMoving.move_start_y(2)
-            elif oneMoving.check_jump_without_num(currentTick):
-                oneMoving.reset_num_jump()
+                speedGravity = (currentTick - oneMoving.get_tick_fall())*0.6*(PYGAME_SPEED/4)
+                if speedGravity > (9*PYGAME_SPEED/4):
+                    speedGravity = (9*PYGAME_SPEED/4)
+
+                if speedGravity > 9: # Sécurité : ne pas traverser les planchers
+                    speedGravity = 9
+
+                oneMoving.move_start_y(speedGravity)
+            else :
+                oneMoving.set_tick_fall(currentTick) # Puisqu'il ne tombe pas, il ne peut pas avoir commencé à tomber avant maintenant
+                if oneMoving.check_jump_without_num(currentTick):
+                    oneMoving.reset_num_jump()
+
+    def goDown(self, obj:object):
+        """
+        Descendre d'une plateforme si elle le permet
+        """
+        for oneFixed in self.fixed['pierceable']:
+            if obj.check_collision(oneFixed):
+                if (obj.get_start_y() + obj.get_size_y() - 10) <= (oneFixed.get_start_y()):
+                    return True
+        return False
+
+    def every_collision (self, obj:object, direction:str) -> int:
+        everyFixed = sum(self.fixed.values(), [])
+
+        listFixed = []
+        for oneFixed in everyFixed:
+            if obj.check_collision(oneFixed):
+                listFixed.append(oneFixed)
+
+        result = False
+
+        if direction == 'b':
+            for obstacle in listFixed:
+                if (obj.get_start_y() + obj.get_size_y() - 10) <= (obstacle.get_start_y()):
+                    result = True
+        
+        if direction == 'h':
+            for obstacle in listFixed:
+                if (obstacle.get_start_y() + obstacle.get_size_y() - 10) <= (obj.get_start_y()):
+                    result = True
+        
+        if direction == 'd':
+            for obstacle in listFixed:
+                if (obj.get_start_x() + obj.get_size_x() - 10) <= (obstacle.get_start_x()):
+                    result = True
+        
+        if direction == 'g':
+            for obstacle in listFixed:
+                if (obstacle.get_start_x() + obstacle.get_size_x() - 10) <= (obj.get_start_x()):
+                    result = True
+        
+        return result

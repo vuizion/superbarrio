@@ -14,7 +14,7 @@ pygame.init()
 SCREEN_RATIO = 1
 PYGAME_WIDTH = 800*SCREEN_RATIO
 PYGAME_HEIGHT = PYGAME_WIDTH*0.8
-PYGAME_SPEED = 5*SCREEN_RATIO
+PYGAME_SPEED = 4*SCREEN_RATIO
 
 # Créer un objet écran avec une largeur de 800 pixels et une hauteur de 600 pixels
 screen = pygame.display.set_mode((PYGAME_WIDTH, PYGAME_HEIGHT))
@@ -26,9 +26,12 @@ pygame.display.set_caption("Super Barrio Brosse")
 
 # On créé nos objets
 Game = reference()
-Game.add_moving_as('playable', hitbox(200, 300, PYGAME_WIDTH*0.05, PYGAME_HEIGHT*0.07, (0, 0, 255), True))
+Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.05, PYGAME_HEIGHT*0.07, (0, 0, 255), True))
 Game.add_fixed_as('solid', hitbox(0, (PYGAME_HEIGHT - PYGAME_HEIGHT*0.2), PYGAME_WIDTH, PYGAME_HEIGHT*0.2, (100, 75, 25)))
-Game.add_fixed_as('pierceable', hitbox(500, (PYGAME_HEIGHT - PYGAME_HEIGHT/3), PYGAME_WIDTH/6, PYGAME_HEIGHT*0.04, (100, 75, 25)))
+Game.add_fixed_as('pierceable', hitbox((PYGAME_WIDTH/4), (PYGAME_HEIGHT - (PYGAME_HEIGHT/3)*1.1), PYGAME_WIDTH/6, PYGAME_HEIGHT*0.03, (100, 75, 25)))
+Game.add_fixed_as('pierceable', hitbox((PYGAME_WIDTH/3), (PYGAME_HEIGHT - (PYGAME_HEIGHT/3)*1.7), PYGAME_WIDTH/6, PYGAME_HEIGHT*0.03, (100, 75, 25)))
+Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/6, PYGAME_HEIGHT*0.2, (120, 120, 120)))
+
 
 
 # Créer une variable pour contrôler la boucle principale
@@ -42,9 +45,11 @@ while running:
     screen.fill((200, 150, 50))
 
     # Dessiner les hitboxs
-    Game.get_fixed_as('solid')[0].affiche(screen, tick)
-    Game.get_moving_as('playable')[0].affiche(screen, tick, PYGAME_SPEED)
-    Game.get_fixed_as('pierceable')[0].affiche(screen, tick)
+    Game.get_fixed_as('solid')[0].affiche(screen, tick, Game)
+    Game.get_fixed_as('solid')[1].affiche(screen, tick, Game)
+    Game.get_fixed_as('pierceable')[0].affiche(screen, tick, Game)
+    Game.get_fixed_as('pierceable')[1].affiche(screen, tick, Game)
+    Game.get_moving_as('playable')[0].affiche(screen, tick, Game, PYGAME_SPEED)
 
     # Mettre à jour l'affichage de l'écran
     pygame.display.flip()
@@ -54,19 +59,27 @@ while running:
 
     # Si la touche fléchée gauche est pressée, déplacer le carré vers la gauche
     if keys[pygame.K_q]:
-        Game.get_moving_as('playable')[0].move_start_x(-PYGAME_SPEED)
+        if Game.get_moving_as('playable')[0].get_start_x() <= 0:
+            pass
+        elif Game.every_collision(Game.get_moving_as('playable')[0], 'g'):
+            pass
+        else:
+            Game.get_moving_as('playable')[0].move_start_x(-PYGAME_SPEED)
     # Si la touche fléchée droite est pressée, déplacer le carré vers la droite
     if keys[pygame.K_d]:
-        Game.get_moving_as('playable')[0].move_start_x(PYGAME_SPEED)
-    # Si la touche fléchée haut est pressée, déplacer le carré vers le haut
-    if keys[pygame.K_z]:
-        Game.get_moving_as('playable')[0].move_start_y(-PYGAME_SPEED)
+        if Game.get_moving_as('playable')[0].get_start_x() + Game.get_moving_as('playable')[0].get_size_x() >= PYGAME_WIDTH:
+            pass
+        elif Game.every_collision(Game.get_moving_as('playable')[0], 'd'):
+            pass
+        else:
+            Game.get_moving_as('playable')[0].move_start_x(PYGAME_SPEED)
     # Si la touche fléchée bas est pressée, déplacer le carré vers le bas
     if keys[pygame.K_s]:
-        if Game.get_moving_as('playable')[0].check_collision(Game.get_fixed_as('solid')[0]):
-            pass
-        else :
+        if Game.goDown(Game.get_moving_as('playable')[0]):
             Game.get_moving_as('playable')[0].move_start_y(PYGAME_SPEED)
+        else :
+            pass
+
     if keys[pygame.K_SPACE]:
         Game.get_moving_as('playable')[0].create_jump(tick)
 
@@ -76,7 +89,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    Game.gravity(tick)
+    Game.gravity(tick, PYGAME_SPEED)
 
     time.sleep(0.01)
     tick += 1

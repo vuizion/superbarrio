@@ -2,7 +2,7 @@ import pygame
 
 # Variable de capacité (par défaut)
 d_max_jump = 3 # depuis la dernière plateforme
-d_tick_delay_jump = 30
+d_tick_delay_jump = 22
 
 class hitbox:
     def __init__ (self, start_x:float, start_y:float, size_x:float, size_y:float, color:tuple = (0, 0, 0), canJump:bool=False) :
@@ -16,6 +16,8 @@ class hitbox:
         self.tick_start_jump = -1
         self.tick_end_jump = -1
         self.num_jump = d_max_jump
+
+        self.tick_fall = 0
     
     def move_start_x (self, distance:int) :
         self.start_x += distance
@@ -41,6 +43,11 @@ class hitbox:
     def get_color (self) -> tuple :
         return self.color
     
+    def set_tick_fall (self, value:int) :
+        self.tick_fall = value
+    def get_tick_fall (self) -> int :
+        return self.tick_fall
+    
     def rect(self):
         return pygame.Rect(self.start_x, self.start_y, self.size_x, self.size_y)
     
@@ -63,11 +70,7 @@ class hitbox:
         return False
     
     def check_jump_without_num(self, currentTick:int) -> bool:
-        moreThanHalfJump = False
-        if self.tick_start_jump + int((self.tick_end_jump - self.tick_start_jump) / 2) <= currentTick:
-            moreThanHalfJump = True
-
-        if (self.canJump) and (moreThanHalfJump):
+        if self.tick_end_jump <= currentTick:
             return True
         return False
 
@@ -80,9 +83,14 @@ class hitbox:
     def reset_num_jump(self):
         self.num_jump = d_max_jump
 
-    def affiche(self, screen, currentTick:int, PYGAME_SPEED=0):
+    def affiche(self, screen, currentTick:int, reference, PYGAME_SPEED=0):
         if self.canJump and self.tick_end_jump >= currentTick:
-            jumpSpeed = -PYGAME_SPEED * (self.tick_end_jump - currentTick) / (self.tick_end_jump - self.tick_start_jump)
-            self.move_start_y(jumpSpeed)
+            jumpSpeed = -PYGAME_SPEED * 2 * (self.tick_end_jump - currentTick) / (self.tick_end_jump - self.tick_start_jump)
+            
+            if reference.every_collision(self, 'h'):
+                # Quelque chose bloc le sprite par le haut, on arrête de sauter
+                self.tick_end_jump = currentTick - 1
+            else:
+                self.move_start_y(jumpSpeed)
 
         pygame.draw.rect(screen, self.color, (self.start_x, self.start_y, self.size_x, self.size_y))
