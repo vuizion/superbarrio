@@ -5,19 +5,27 @@ d_max_jump = 3 # depuis la dernière plateforme
 d_tick_delay_jump = 22
 
 class hitbox:
-    def __init__ (self, start_x:float, start_y:float, size_x:float, size_y:float, color:tuple = (0, 0, 0), canJump:bool=False) :
+    def __init__ (self, start_x:float, start_y:float, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg=None, canJump:bool=False) :
         self.start_x = int(start_x)
         self.start_y = int(start_y)
         self.size_x = int(size_x)
         self.size_y = int(size_y)
         self.color = color
+        self.srcImg = srcImg
 
         self.canJump = canJump
         self.tick_start_jump = -1
         self.tick_end_jump = -1
         self.num_jump = d_max_jump
 
+        self.lookDirection = 0
+        """
+        0 : Regarde vers la droite
+        1 : Regarde vers la gauche
+        """
+
         self.tick_fall = 0
+
     
     def move_start_x (self, distance:int) :
         self.start_x += distance
@@ -47,6 +55,9 @@ class hitbox:
         self.tick_fall = value
     def get_tick_fall (self) -> int :
         return self.tick_fall
+
+    def set_lookDirection (self, newDir:int) :
+        self.lookDirection = newDir
     
     def rect(self):
         return pygame.Rect(self.start_x, self.start_y, self.size_x, self.size_y)
@@ -93,4 +104,9 @@ class hitbox:
             else:
                 self.move_start_y(jumpSpeed)
 
-        pygame.draw.rect(screen, self.color, (self.start_x, self.start_y, self.size_x, self.size_y))
+        if self.srcImg == None :
+            pygame.draw.rect(screen, self.color, (self.start_x, self.start_y, self.size_x, self.size_y))
+        else :
+            image = pygame.image.load(self.srcImg[self.lookDirection])
+            image = pygame.transform.scale(image, (self.size_x, self.size_y))
+            screen.blit(image, (self.start_x, self.start_y))

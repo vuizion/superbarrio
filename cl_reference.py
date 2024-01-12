@@ -92,3 +92,16 @@ class reference:
                     result = True
         
         return result
+    
+
+    def mapScroll(self, leftDirection:bool, PYGAME_SPEED, whichPlayer:object=None):
+        everyObject = []
+        everyObject.append(sum(self.fixed.values(), []))
+        everyObject.append(sum(self.moving.values(), []))
+        everyObject = sum(everyObject, [])
+
+        for obj in everyObject:
+            obj.move_start_x(PYGAME_SPEED if leftDirection else -PYGAME_SPEED)
+
+
+
