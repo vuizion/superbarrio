@@ -10,6 +10,16 @@ class reference:
             'pierceable' : [],
             'enterable' : []
         }
+
+    def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
+        everyObject = []
+        everyObject.append(sum(self.fixed.values(), []))
+        everyObject.append(sum(self.moving.values(), []))
+        everyObject = sum(everyObject, [])
+
+        for obj in everyObject:
+            if obj.get_start_x() > -obj.get_size_x() and obj.get_start_x() < PYGAME_WIDTH :
+                obj.affiche(screen, tick, self, PYGAME_SPEED)
     
     def add_moving_as(self, key:str, obj:object):
         self.moving[key].append(obj)
@@ -84,12 +94,14 @@ class reference:
         if direction == 'd':
             for obstacle in listFixed:
                 if (obj.get_start_x() + obj.get_size_x() - 10) <= (obstacle.get_start_x()):
-                    result = True
+                    if obstacle.get_start_y() < (obj.get_start_y()+obj.get_size_y()-15): # Condition ajoutée pour régler le bug "le personnage s'arrête car un seul pixel dépasse du sol"
+                        result = True
         
         if direction == 'g':
             for obstacle in listFixed:
                 if (obstacle.get_start_x() + obstacle.get_size_x() - 10) <= (obj.get_start_x()):
-                    result = True
+                    if obstacle.get_start_y() < (obj.get_start_y()+obj.get_size_y()-15): # Condition ajoutée pour régler le bug "le personnage s'arrête car un seul pixel dépasse du sol"
+                        result = True
         
         return result
     
