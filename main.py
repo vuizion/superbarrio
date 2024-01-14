@@ -70,7 +70,7 @@ for colone_id in range(len(map)):
         if case == 0:
             pass
         elif case == 1:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (100, 75, 25)))
+            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (100, 75, 25), ["img/sand.png"]))
         elif case == 2:
             Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (120, 120, 120)))
 
@@ -142,7 +142,7 @@ while running:
 
     Game.gravity(tick, PYGAME_SPEED)
 
-    time.sleep(0.01)
+    #time.sleep(0.01)
     tick += 1
 
 
