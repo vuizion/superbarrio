@@ -60,19 +60,23 @@ while running:
 
     # Si la touche fléchée gauche est pressée, déplacer le carré vers la gauche
     if keys[pygame.K_q]:
-        if Game.get_moving_as('playable')[0].get_start_x() <= PYGAME_WIDTH/8:
+        if Game.every_collision(Game.get_moving_as('playable')[0], 'g'):
             pass
-        elif Game.every_collision(Game.get_moving_as('playable')[0], 'g'):
-            pass
+        elif Game.get_moving_as('playable')[0].get_start_x() <= PYGAME_WIDTH/7:
+            Game.mapScroll(True, PYGAME_SPEED)
+            Game.get_moving_as('playable')[0].move_start_x(-PYGAME_SPEED) # On déplace quand même le joueur
+            Game.get_moving_as('playable')[0].set_lookDirection(1)
         else:
             Game.get_moving_as('playable')[0].move_start_x(-PYGAME_SPEED)
             Game.get_moving_as('playable')[0].set_lookDirection(1)
     # Si la touche fléchée droite est pressée, déplacer le carré vers la droite
     if keys[pygame.K_d]:
-        if Game.get_moving_as('playable')[0].get_start_x() + Game.get_moving_as('playable')[0].get_size_x() >= 7*PYGAME_WIDTH/8:
+        if Game.every_collision(Game.get_moving_as('playable')[0], 'd'):
             pass
-        elif Game.every_collision(Game.get_moving_as('playable')[0], 'd'):
-            pass
+        elif Game.get_moving_as('playable')[0].get_start_x() + Game.get_moving_as('playable')[0].get_size_x() >= 6*PYGAME_WIDTH/7:
+            Game.mapScroll(False, PYGAME_SPEED)
+            Game.get_moving_as('playable')[0].move_start_x(PYGAME_SPEED) # On déplace quand même le joueur
+            Game.get_moving_as('playable')[0].set_lookDirection(0)
         else:
             Game.get_moving_as('playable')[0].move_start_x(PYGAME_SPEED)
             Game.get_moving_as('playable')[0].set_lookDirection(0)
