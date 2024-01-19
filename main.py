@@ -27,25 +27,25 @@ pygame.display.set_caption("Super Barrio Brosse")
 # On créé nos objets
 Game = reference()
 Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p1r.png", "img/p1l.png"], True))
-Game.add_fixed_as('pierceable', hitbox((PYGAME_WIDTH/4), (PYGAME_HEIGHT - (PYGAME_HEIGHT/3)*1.1), PYGAME_WIDTH/6, PYGAME_HEIGHT*0.03, (100, 75, 25)))
-Game.add_fixed_as('pierceable', hitbox((PYGAME_WIDTH/3), (PYGAME_HEIGHT - (PYGAME_HEIGHT/3)*1.7), PYGAME_WIDTH/6, PYGAME_HEIGHT*0.03, (100, 75, 25)))
 Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/9, PYGAME_HEIGHT*0.2, (120, 120, 120), ["img/spike.png"]))
-
 
 
 # Exemple de map
 # 0 : case vide
 # 1 : Élémént sol
 # 1.1 : Élément sol plus grand (4x4)
-# 2 : Mur
-# 3 : Plateforme
+# 2 : Bloc solide
+# 2.2 : Mur de 2 blocs de hauteur
+# 2.3 : Mur de 3 blocs de hauteur
+# 2.4 : Mur de 4 blocs de hauteur
+# 3 : Plateforme d'un bloc de large
 
 map = [ [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 3, 0, 0, 0],
+        [0, 0, 0, 0, 3, 3, 0, 1.1, 0],
+        [0, 0, 0, 0, 3, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
@@ -75,6 +75,12 @@ map = [ [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
 case_width = PYGAME_WIDTH/10
 case_height = PYGAME_HEIGHT/8
 
+
+# ATH
+Game.add_ath_as('text', hitbox((PYGAME_WIDTH/2), (PYGAME_HEIGHT/2.6), 2*case_width, 2*case_height, (120, 120, 120), ["img/spike.png"]))
+
+
+
 for colone_id in range(len(map)):
     current_x = case_width*colone_id
     for case_id in range(len(map[colone_id])):
@@ -89,7 +95,7 @@ for colone_id in range(len(map)):
         elif case == 2:
             Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (120, 120, 120)))
         elif case == 3:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (120, 120, 120)))
+            Game.add_fixed_as('pierceable', hitbox(current_x, current_y+(5*case_height)/6, case_width, case_height/6, (0, 120, 120)))
 
 
 
@@ -156,6 +162,8 @@ while running:
         # Si l'événement est de type QUIT, sortir de la boucle
         if event.type == pygame.QUIT:
             running = False
+
+    Game.checkDeath(PYGAME_HEIGHT, screen, tick, PYGAME_SPEED)
 
     Game.gravity(tick, PYGAME_SPEED)
 

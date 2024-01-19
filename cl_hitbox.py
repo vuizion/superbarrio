@@ -110,3 +110,8 @@ class hitbox:
             image = pygame.image.load(self.srcImg[self.lookDirection])
             image = pygame.transform.scale(image, (self.size_x, self.size_y))
             screen.blit(image, (self.start_x, self.start_y))
+    
+    def isDeath(self, PYGAME_HEIGHT):
+        if self.start_y >= PYGAME_HEIGHT*2:
+            return True
+        return False

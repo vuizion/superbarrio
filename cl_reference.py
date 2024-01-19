@@ -10,6 +10,9 @@ class reference:
             'pierceable' : [],
             'enterable' : []
         }
+        self.ath = {
+            'text' : []
+        }
 
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
         everyObject = []
@@ -25,6 +28,8 @@ class reference:
         self.moving[key].append(obj)
     def add_fixed_as(self, key:str, obj:object):
         self.fixed[key].append(obj)
+    def add_ath_as(self, key:str,  obj:object):
+        self.ath[key].append(obj)
 
     def get_moving_as(self, key:str):
         return self.moving[key]
@@ -94,13 +99,13 @@ class reference:
         if direction == 'd':
             for obstacle in listFixed:
                 if (obj.get_start_x() + obj.get_size_x() - 10) <= (obstacle.get_start_x()):
-                    if obstacle.get_start_y() < (obj.get_start_y()+obj.get_size_y()-15): # Condition ajoutée pour régler le bug "le personnage s'arrête car un seul pixel dépasse du sol"
+                    if obstacle.get_start_y() < (obj.get_start_y()+obj.get_size_y()-12): # Condition ajoutée pour régler le bug "le personnage s'arrête car un seul pixel dépasse du sol"
                         result = True
         
         if direction == 'g':
             for obstacle in listFixed:
                 if (obstacle.get_start_x() + obstacle.get_size_x() - 10) <= (obj.get_start_x()):
-                    if obstacle.get_start_y() < (obj.get_start_y()+obj.get_size_y()-15): # Condition ajoutée pour régler le bug "le personnage s'arrête car un seul pixel dépasse du sol"
+                    if obstacle.get_start_y() < (obj.get_start_y()+obj.get_size_y()-12): # Condition ajoutée pour régler le bug "le personnage s'arrête car un seul pixel dépasse du sol"
                         result = True
         
         return result
@@ -114,6 +119,11 @@ class reference:
 
         for obj in everyObject:
             obj.move_start_x(PYGAME_SPEED if leftDirection else -PYGAME_SPEED)
+
+    def checkDeath(self, PYGAME_HEIGHT, screen, tick, PYGAME_SPEED):
+        for player in self.moving['playable']:
+            if player.isDeath(PYGAME_HEIGHT):
+                self.ath['text'][0].affiche(screen, tick, self, PYGAME_SPEED)
 
 
 
