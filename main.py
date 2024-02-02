@@ -22,6 +22,8 @@ screen = pygame.display.set_mode((PYGAME_WIDTH, PYGAME_HEIGHT))
 # Donner un titre à la fenêtre
 pygame.display.set_caption("Super Barrio Brosse")
 
+clock = pygame.time.Clock()
+
 
 
 # On créé nos objets
@@ -32,8 +34,8 @@ Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HE
 
 # Exemple de map
 # 0 : case vide
-# 1 : Élémént sol
-# 1.1 : Élément sol plus grand (4x4)
+# 1 : Élémént sol (1x2)
+# 1.1 : Élément sol plus grand (2x2)
 # 2 : Bloc solide
 # 2.2 : Mur de 2 blocs de hauteur
 # 2.3 : Mur de 3 blocs de hauteur
@@ -52,16 +54,16 @@ map = [ [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 1],
+        [0, 0, 0, 0, 0, 0, 0, 1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
+        [0, 0, 0, 0, 0, 3, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 2, 2, 1.1, 0],
+        [0, 0, 0, 0, 2.3, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
+        [0, 0, 0, 0, 0, 3, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -78,7 +80,10 @@ case_height = PYGAME_HEIGHT/8
 
 # ATH
 Game.add_ath_as('text', hitbox((PYGAME_WIDTH/2), (PYGAME_HEIGHT/2.6), 2*case_width, 2*case_height, (120, 120, 120), ["img/spike.png"]))
-
+Game.add_ath_as('background', hitbox(0, 0 , 10*case_width, 8*case_height, (120, 120, 120), ["img/bg.png"]))
+bg = pygame.image.load("img/bg.png")
+# Redimensionner l'image
+#bg = pygame.transform.scale(bg, (10*case_width, 8*case_height))
 
 
 for colone_id in range(len(map)):
@@ -89,11 +94,17 @@ for colone_id in range(len(map)):
         if case == 0:
             pass
         elif case == 1:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (100, 75, 25), ["img/sand.png"]))
+            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*2, (100, 75, 25), ["img/sol1x2.png"]))
         elif case == 1.1:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width*2, case_height*2, (100, 75, 25), ["img/sand.png"]))
+            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width*2, case_height*2, (100, 75, 25), ["img/sol2x2.png"]))
         elif case == 2:
             Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (120, 120, 120)))
+        elif case == 2.2:
+            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*2, (120, 120, 120)))
+        elif case == 2.3:
+            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*3, (120, 120, 120)))
+        elif case == 2.4:
+            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*4, (120, 120, 120)))
         elif case == 3:
             Game.add_fixed_as('pierceable', hitbox(current_x, current_y+(5*case_height)/6, case_width, case_height/6, (0, 120, 120)))
 
@@ -109,12 +120,13 @@ while running:
 
     # Remplir l'écran avec la couleur souhaitée
     screen.fill((200, 150, 50))
+    screen.blit(bg, (0,0))
+
+    # DEBUG AFFICHER LE BACKGROUND
+    # Game.get_ath_as('background')[0].affiche(screen, tick, Game, PYGAME_SPEED)
 
     # Afficher les éléments en fonction de leur hitbox
     Game.showCurrentElement(PYGAME_WIDTH, screen, tick, PYGAME_SPEED)
-
-    # Mettre à jour l'affichage de l'écran
-    pygame.display.flip()
 
     # Récupérer l'état des touches du clavier
     keys = pygame.key.get_pressed()
@@ -167,7 +179,13 @@ while running:
 
     Game.gravity(tick, PYGAME_SPEED)
 
-    time.sleep(0.003)
+
+
+    # Mettre à jour l'affichage de l'écran
+    pygame.display.flip()
+
+    # time.sleep(0.003)
+    clock.tick(90)
     tick += 1
 
 

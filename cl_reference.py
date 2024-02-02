@@ -11,6 +11,7 @@ class reference:
             'enterable' : []
         }
         self.ath = {
+            'background' : [],
             'text' : []
         }
 
@@ -35,6 +36,8 @@ class reference:
         return self.moving[key]
     def get_fixed_as(self, key:str):
         return self.fixed[key]
+    def get_ath_as(self, key:str):
+        return self.ath[key]
     
     def gravity(self, currentTick:int, PYGAME_SPEED):
         everyMoving = sum(self.moving.values(), [])
