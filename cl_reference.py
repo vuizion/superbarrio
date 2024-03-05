@@ -126,7 +126,12 @@ class reference:
     def checkDeath(self, PYGAME_HEIGHT, screen, tick, PYGAME_SPEED):
         for player in self.moving['playable']:
             if player.isDeath(PYGAME_HEIGHT):
-                self.ath['text'][0].affiche(screen, tick, self, PYGAME_SPEED)
+                print("Ca marche je suis mort")
+                if player.get_remainingLife() >= 0 :
+                    player.relive(PYGAME_HEIGHT)
+                else :
+                    print("C'est finit tu es mort")
+                # self.ath['text'][0].affiche(screen, tick, self, PYGAME_SPEED)
 
 
 

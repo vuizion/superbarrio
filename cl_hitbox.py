@@ -17,6 +17,7 @@ class hitbox:
         self.tick_start_jump = -1
         self.tick_end_jump = -1
         self.num_jump = d_max_jump
+        self.remainingLife = 3
 
         self.lookDirection = 0
         """
@@ -55,6 +56,8 @@ class hitbox:
         self.tick_fall = value
     def get_tick_fall (self) -> int :
         return self.tick_fall
+    def get_remainingLife(self) -> int :
+        return self.remainingLife
 
     def set_lookDirection (self, newDir:int) :
         self.lookDirection = newDir
@@ -112,6 +115,10 @@ class hitbox:
             screen.blit(image, (self.start_x, self.start_y))
     
     def isDeath(self, PYGAME_HEIGHT):
-        if self.start_y >= PYGAME_HEIGHT*2:
+        if self.start_y >= PYGAME_HEIGHT*1.5:
             return True
         return False
+
+    def relive(self, PYGAME_HEIGHT) :
+        self.remainingLife -= 1
+        self.start_y = PYGAME_HEIGHT*0.2
