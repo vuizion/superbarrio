@@ -12,7 +12,8 @@ class reference:
         }
         self.ath = {
             'background' : [],
-            'text' : []
+            'text' : [],
+            'heart' : []
         }
 
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
@@ -23,7 +24,12 @@ class reference:
 
         for obj in everyObject:
             if obj.get_start_x() > -obj.get_size_x() and obj.get_start_x() < PYGAME_WIDTH :
-                obj.affiche(screen, tick, self, PYGAME_SPEED)
+                obj.affiche(screen)
+        
+        # Afficher le bon nombre de coeurs au bon joueur
+        for heartId in range(len(self.ath['heart'])) :
+            if heartId+1 <= 3 and heartId < self.moving['playable'][0].get_remainingLife() :
+                self.ath['heart'][heartId].affiche(screen)
     
     def add_moving_as(self, key:str, obj:object):
         self.moving[key].append(obj)
@@ -44,6 +50,8 @@ class reference:
         everyFixed = sum(self.fixed.values(), [])
 
         for oneMoving in everyMoving:
+            oneMoving.jumpExecute(currentTick, self, PYGAME_SPEED)
+
             isFalling = True
 
             if self.every_collision(oneMoving, 'b'):
@@ -126,8 +134,7 @@ class reference:
     def checkDeath(self, PYGAME_HEIGHT, screen, tick, PYGAME_SPEED):
         for player in self.moving['playable']:
             if player.isDeath(PYGAME_HEIGHT):
-                print("Ca marche je suis mort")
-                if player.get_remainingLife() >= 0 :
+                if player.get_remainingLife() >= 1 :
                     player.relive(PYGAME_HEIGHT)
                 else :
                     print("C'est finit tu es mort")

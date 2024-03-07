@@ -1,6 +1,7 @@
 import pygame
 
 # Variable de capacité (par défaut)
+d_max_life = 3 # Vies au totales
 d_max_jump = 3 # depuis la dernière plateforme
 d_tick_delay_jump = 22
 
@@ -17,7 +18,7 @@ class hitbox:
         self.tick_start_jump = -1
         self.tick_end_jump = -1
         self.num_jump = d_max_jump
-        self.remainingLife = 3
+        self.remainingLife = d_max_life
 
         self.lookDirection = 0
         """
@@ -97,7 +98,7 @@ class hitbox:
     def reset_num_jump(self):
         self.num_jump = d_max_jump
 
-    def affiche(self, screen, currentTick:int, reference, PYGAME_SPEED=0):
+    def jumpExecute(self, currentTick:int, reference, PYGAME_SPEED):
         if self.canJump and self.tick_end_jump >= currentTick:
             jumpSpeed = -PYGAME_SPEED * 2 * (self.tick_end_jump - currentTick) / (self.tick_end_jump - self.tick_start_jump)
             
@@ -107,6 +108,8 @@ class hitbox:
             else:
                 self.move_start_y(jumpSpeed)
 
+    def affiche(self, screen):
+
         if self.srcImg == None :
             pygame.draw.rect(screen, self.color, (self.start_x, self.start_y, self.size_x, self.size_y))
         else :
@@ -115,10 +118,11 @@ class hitbox:
             screen.blit(image, (self.start_x, self.start_y))
     
     def isDeath(self, PYGAME_HEIGHT):
-        if self.start_y >= PYGAME_HEIGHT*1.5:
+        if self.start_y >= PYGAME_HEIGHT*1.2:
+            self.remainingLife -= 1
             return True
         return False
 
     def relive(self, PYGAME_HEIGHT) :
-        self.remainingLife -= 1
         self.start_y = PYGAME_HEIGHT*0.2
+        self.num_jump = d_max_jump
