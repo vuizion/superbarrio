@@ -30,6 +30,8 @@ class reference:
         for heartId in range(len(self.ath['heart'])) :
             if heartId+1 <= 3 and heartId < self.moving['playable'][0].get_remainingLife() :
                 self.ath['heart'][heartId].affiche(screen)
+            elif heartId+1 > 3 and heartId+1 <= 6 and heartId < self.moving['playable'][1].get_remainingLife()+3 :
+                self.ath['heart'][heartId].affiche(screen)
     
     def add_moving_as(self, key:str, obj:object):
         self.moving[key].append(obj)

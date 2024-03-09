@@ -32,7 +32,7 @@ clock = pygame.time.Clock()
 # On créé nos objets
 Game = reference()
 Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p1r.png", "img/p1l.png"], True))
-if multiplayer : Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/11, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p2r.png", "img/p2l.png"], True))
+if multiplayer : Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/5, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p2r.png", "img/p2l.png"], True))
 Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/9, PYGAME_HEIGHT*0.2, (120, 120, 120), ["img/spike.png"]))
 
 
@@ -89,6 +89,11 @@ Game.add_ath_as('background', hitbox(0, 0 , 10*case_width, 8*case_height, (120, 
 Game.add_ath_as('heart', hitbox(0.2*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 Game.add_ath_as('heart', hitbox(0.8*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 Game.add_ath_as('heart', hitbox(1.4*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+
+if multiplayer :
+    Game.add_ath_as('heart', hitbox(8.1*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox(8.7*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox(9.3*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 
 bg = pygame.image.load("img/bg.png")
 # Redimensionner l'image
@@ -175,7 +180,7 @@ while running:
         else :
             pass
 
-    if keys[pygame.K_SPACE]:
+    if (keys[pygame.K_SPACE] or keys[pygame.K_z]):
         Game.get_moving_as('playable')[0].create_jump(tick)
 
 
