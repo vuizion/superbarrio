@@ -1,5 +1,10 @@
+# Importer nos classes (cl)
+from cl_obstacle import obstacle
+from cl_hitbox import hitbox
+
+
 class reference:
-    def __init__ (self):
+    def __init__ (self, multiplayer:bool=False, SCREEN_RATIO:float=1):
         self.moving = {
             'playable' : [],
             'ai' : [],
@@ -15,6 +20,42 @@ class reference:
             'text' : [],
             'heart' : []
         }
+        self.elements = []
+
+        self.loadedColumns = 0 # Stock le nombre de colonne dèjà chargées : des objets sont déjà créé et stocké juste au dessus à partir de la map composé d'élément sous forme de code
+        self.centeredColumn = 5 # id de la colonne la plus au centre de l'écran
+
+        self.SCREEN_RATIO = SCREEN_RATIO
+        self.PYGAME_WIDTH = 800*self.SCREEN_RATIO
+        self.PYGAME_HEIGHT = self.PYGAME_WIDTH*0.8
+        self.PYGAME_SPEED = 3.8*self.SCREEN_RATIO
+        self.block_x = self.PYGAME_WIDTH/10
+        self.block_y = self.PYGAME_HEIGHT/8
+
+        self.multiplayer = multiplayer
+
+        # Exemple de map
+        # 0 : case vide
+        # 0.1 : spawn du joueur 1
+        # 0.2 : spawn du joueur 2
+        # 0.3 : point de respawn pendant le parcours
+        # 1 : Élémént sol (1x2)
+        # 1.1 : Élément sol plus grand (2x2)
+        # 2 : Bloc solide
+        # 2.2 : Mur de 2 blocs de hauteur
+        # 2.3 : Mur de 3 blocs de hauteur
+        # 2.4 : Mur de 4 blocs de hauteur
+        # 3 : Plateforme d'un bloc de large
+
+        self.map = [[0, 0, 0, 0, 0, 0, 0, 1.1, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0.1, 0, 0, 1.1, 0],
+                    [0, 0, 0, 0, 0.2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        
+        self.obstacle = obstacle()
+        self.add_obstacle()
 
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
         everyObject = []
@@ -141,6 +182,28 @@ class reference:
                 else :
                     print("C'est finit tu es mort")
                 # self.ath['text'][0].affiche(screen, tick, self, PYGAME_SPEED)
+                    
+    def add_obstacle(self) -> None:
+        self.map.append([0, 0, 0, 0, 0.3, 0, 0, 2.2, 0]) # Point de respawn avant l'obstacle
+        for column in self.obstacle.difficulty_1_num_1():
+            self.map.append(column)
+        self.loadRemainingColumns()
 
+    def loadRemainingColumns(self):
+        for newColId in range(self.loadedColumns, len(self.map)):
+            columnToAdd = []
+            for blockId in range(len(self.map[newColId])):
+                block = self.map[newColId][blockId]
+                columnToAdd.append(self.createRealHitbox(block, newColId, blockId))
+            self.elements.append(columnToAdd)
+        self.loadedColumns = len(self.map)
 
+    def createRealHitbox(self, block:float, ref_x:int, ref_y:int) -> object:
+        if block == 1:
+            return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (100, 75, 25), ["img/sol1x2.png"])
+        elif block == 1.1:
+            return hitbox('solid', ref_x, ref_y, self.block_x*2, self.block_y*2, (100, 75, 25), ["img/sol2x2.png"])
+        elif block == 2.2:
+            return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (120, 120, 120))
+        return None
 

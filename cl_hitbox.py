@@ -6,13 +6,18 @@ d_max_jump = 3 # depuis la dernière plateforme
 d_tick_delay_jump = 22
 
 class hitbox:
-    def __init__ (self, start_x:float, start_y:float, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg=None, canJump:bool=False) :
-        self.start_x = int(start_x)
-        self.start_y = int(start_y)
+    def __init__ (self, hitboxType:str, reference_x:int, reference_y:int, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg=None, canJump:bool=False) :
+        self.start_x = reference_x # DEBUG
+        self.start_y = reference_y # DEBUG
         self.size_x = int(size_x)
         self.size_y = int(size_y)
         self.color = color
         self.srcImg = srcImg
+
+        self.reference_x = reference_x
+        self.reference_y = reference_y
+
+        self.type = hitboxType
 
         self.canJump = canJump
         self.tick_start_jump = -1

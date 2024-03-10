@@ -30,10 +30,10 @@ clock = pygame.time.Clock()
 
 
 # On créé nos objets
-Game = reference()
-Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p1r.png", "img/p1l.png"], True))
-if multiplayer : Game.add_moving_as('playable', hitbox(PYGAME_WIDTH/5, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p2r.png", "img/p2l.png"], True))
-Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/9, PYGAME_HEIGHT*0.2, (120, 120, 120), ["img/spike.png"]))
+Game = reference(multiplayer, SCREEN_RATIO)
+Game.add_moving_as('playable', hitbox('playable', PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p1r.png", "img/p1l.png"], True))
+if multiplayer : Game.add_moving_as('playable', hitbox('playable', PYGAME_WIDTH/5, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p2r.png", "img/p2l.png"], True))
+# Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/9, PYGAME_HEIGHT*0.2, (120, 120, 120), ["img/spike.png"]))
 
 
 # Exemple de map
@@ -83,23 +83,23 @@ case_height = PYGAME_HEIGHT/8
 
 
 # ATH
-Game.add_ath_as('text', hitbox((PYGAME_WIDTH/2), (PYGAME_HEIGHT/2.6), 2*case_width, 2*case_height, (120, 120, 120), ["img/spike.png"]))
-Game.add_ath_as('background', hitbox(0, 0 , 10*case_width, 8*case_height, (120, 120, 120), ["img/bg.png"]))
+# Game.add_ath_as('text', hitbox((PYGAME_WIDTH/2), (PYGAME_HEIGHT/2.6), 2*case_width, 2*case_height, (120, 120, 120), ["img/spike.png"]))
+Game.add_ath_as('background', hitbox('background', 0, 0 , 10*case_width, 8*case_height, (120, 120, 120), ["img/bg.png"]))
 
-Game.add_ath_as('heart', hitbox(0.2*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-Game.add_ath_as('heart', hitbox(0.8*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-Game.add_ath_as('heart', hitbox(1.4*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+Game.add_ath_as('heart', hitbox('heart', 0.2*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+Game.add_ath_as('heart', hitbox('heart', 0.8*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+Game.add_ath_as('heart', hitbox('heart', 1.4*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 
 if multiplayer :
-    Game.add_ath_as('heart', hitbox(8.1*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-    Game.add_ath_as('heart', hitbox(8.7*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-    Game.add_ath_as('heart', hitbox(9.3*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox('heart', 8.1*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox('heart', 8.7*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox('heart', 9.3*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 
 bg = pygame.image.load("img/bg.png")
 # Redimensionner l'image
 bg = pygame.transform.scale(bg, (10*case_width, 8*case_height))
 
-
+"""
 for colone_id in range(len(map)):
     current_x = case_width*colone_id
     for case_id in range(len(map[colone_id])):
@@ -121,7 +121,7 @@ for colone_id in range(len(map)):
             Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*4, (120, 120, 120)))
         elif case == 3:
             Game.add_fixed_as('pierceable', hitbox(current_x, current_y+(5*case_height)/6, case_width, case_height/6, (0, 120, 120)))
-
+"""
 
 
 # Créer une variable pour contrôler la boucle principale
@@ -142,8 +142,9 @@ while running:
     # Récupérer l'état des touches du clavier
     keys = pygame.key.get_pressed()
 
-
-
+    if tick%200 == 0: # DEBUG -----
+        print(Game.elements)
+        print(len(Game.elements))
 
     ########################
     ##      PLAYER 1      ##
