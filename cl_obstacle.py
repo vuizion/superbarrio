@@ -15,3 +15,8 @@ class obstacle:
             [0, 0, 0, 0, 0, 0, 0, 0, 0]
         ]
         return obs
+    def difficulty_1_num_2(self) -> list:
+        obs = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
+        return obs

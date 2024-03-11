@@ -23,14 +23,15 @@ class reference:
         self.elements = []
 
         self.loadedColumns = 0 # Stock le nombre de colonne dèjà chargées : des objets sont déjà créé et stocké juste au dessus à partir de la map composé d'élément sous forme de code
-        self.centeredColumn = 5 # id de la colonne la plus au centre de l'écran
+        self.leftColumn = 0 # id de la colonne la plus à gauche de l'écran
+        self.leftColumnPixel = 0 # pixel séparant la gauche de la colonne avec le bord gauche de l'écran
 
         self.SCREEN_RATIO = SCREEN_RATIO
         self.PYGAME_WIDTH = 800*self.SCREEN_RATIO
         self.PYGAME_HEIGHT = self.PYGAME_WIDTH*0.8
         self.PYGAME_SPEED = 3.8*self.SCREEN_RATIO
-        self.block_x = self.PYGAME_WIDTH/10
-        self.block_y = self.PYGAME_HEIGHT/8
+        self.block_x = int(self.PYGAME_WIDTH/10)
+        self.block_y = int(self.PYGAME_HEIGHT/8)
 
         self.multiplayer = multiplayer
 
@@ -73,6 +74,21 @@ class reference:
                 self.ath['heart'][heartId].affiche(screen)
             elif heartId+1 > 3 and heartId+1 <= 6 and heartId < self.moving['playable'][1].get_remainingLife()+3 :
                 self.ath['heart'][heartId].affiche(screen)
+
+    def smartShow(self) -> None:
+        pass
+
+    def selectLeftColumn(self):
+        print(self.leftColumnPixel)
+        if self.leftColumnPixel < self.block_x:
+            print('trop à gauche ancienne colonne')
+            self.leftColumn += 1
+            self.leftColumnPixel -= self.block_x
+        elif self.leftColumnPixel > 0:
+            print('trop a droite')
+            self.leftColumn -= 1
+            self.leftColumnPixel += self.block_x
+
     
     def add_moving_as(self, key:str, obj:object):
         self.moving[key].append(obj)
@@ -194,7 +210,7 @@ class reference:
             columnToAdd = []
             for blockId in range(len(self.map[newColId])):
                 block = self.map[newColId][blockId]
-                columnToAdd.append(self.createRealHitbox(block, newColId, blockId))
+                if block != 0 : columnToAdd.append(self.createRealHitbox(block, newColId, blockId))
             self.elements.append(columnToAdd)
         self.loadedColumns = len(self.map)
 
