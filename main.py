@@ -17,7 +17,7 @@ PYGAME_HEIGHT = PYGAME_WIDTH*0.8
 PYGAME_SPEED = 3.8*SCREEN_RATIO
 
 # Est-ce qu'un deuxième joueur souhaite jouer ?
-multiplayer = True
+multiplayer = False
 
 # Créer un objet écran avec une largeur de 800 pixels et une hauteur de 600 pixels
 screen = pygame.display.set_mode((PYGAME_WIDTH, PYGAME_HEIGHT))

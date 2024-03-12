@@ -86,6 +86,8 @@ class reference:
                 for elem in self.elements[columnID]:
                     pixel_x = self.leftColumnPixel + (columnID - self.leftColumn)*self.block_x
                     if elem != None : elem.smartShowObject(screen, pixel_x, self.block_y)
+            else : self.add_obstacle() # Puisque la map va se terminer, on ajoute un nouveau qui va mécaniquement ajouter de la longeur à la map
+
 
     def selectLeftColumn(self):
         if self.leftColumnPixel < -self.block_x:
