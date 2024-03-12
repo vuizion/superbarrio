@@ -142,13 +142,12 @@ while running:
     # Récupérer l'état des touches du clavier
     keys = pygame.key.get_pressed()
 
-    """if tick%200 == 0: # DEBUG -----
-        print(Game.elements)
-        print(len(Game.elements))"""
-    if tick%10 == 0:
-        Game.leftColumnPixel -= 10
-        Game.selectLeftColumn()
-        print(Game.leftColumn)
+
+    Game.leftColumnPixel -= 2
+    if tick%2 == 0:
+        Game.smartShow(screen)
+
+
 
     ########################
     ##      PLAYER 1      ##

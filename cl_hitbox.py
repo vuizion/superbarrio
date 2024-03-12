@@ -122,6 +122,11 @@ class hitbox:
             image = pygame.transform.scale(image, (self.size_x, self.size_y))
             screen.blit(image, (self.start_x, self.start_y))
     
+    def smartShowObject(self, screen, pixel_x, block_y):
+        self.start_x = pixel_x
+        self.start_y = self.reference_y * block_y - block_y/2
+        self.affiche(screen)
+    
     def isDeath(self, PYGAME_HEIGHT):
         if self.start_y >= PYGAME_HEIGHT*1.2:
             self.remainingLife -= 1

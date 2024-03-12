@@ -75,19 +75,25 @@ class reference:
             elif heartId+1 > 3 and heartId+1 <= 6 and heartId < self.moving['playable'][1].get_remainingLife()+3 :
                 self.ath['heart'][heartId].affiche(screen)
 
-    def smartShow(self) -> None:
-        pass
+    def smartShow(self, screen) -> None:
+        self.selectLeftColumn()
+        firstColumn = (self.leftColumn - 1 if self.leftColumn != 0 else 0)
+        for columnID in range(firstColumn, self.leftColumn + 11):
+            if columnID < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
+                for elem in self.elements[columnID]:
+                    pixel_x = self.leftColumnPixel + (columnID - self.leftColumn)*self.block_x
+                    if elem != None : elem.smartShowObject(screen, pixel_x, self.block_y)
 
     def selectLeftColumn(self):
-        print(self.leftColumnPixel)
-        if self.leftColumnPixel < self.block_x:
-            print('trop à gauche ancienne colonne')
+        if self.leftColumnPixel < -self.block_x:
             self.leftColumn += 1
-            self.leftColumnPixel -= self.block_x
-        elif self.leftColumnPixel > 0:
-            print('trop a droite')
-            self.leftColumn -= 1
             self.leftColumnPixel += self.block_x
+        elif self.leftColumnPixel > 0 and self.leftColumn > 0:
+            self.leftColumn -= 1
+            self.leftColumnPixel -= self.block_x
+        elif self.leftColumnPixel > 0 and self.leftColumn <= 0:
+            self.leftColumn = 0
+            self.leftColumnPixel = 0
 
     
     def add_moving_as(self, key:str, obj:object):
@@ -196,7 +202,8 @@ class reference:
                 if player.get_remainingLife() >= 1 :
                     player.relive(PYGAME_HEIGHT)
                 else :
-                    print("C'est finit tu es mort")
+                    pass
+                    #print("C'est finit tu es mort")
                 # self.ath['text'][0].affiche(screen, tick, self, PYGAME_SPEED)
                     
     def add_obstacle(self) -> None:
