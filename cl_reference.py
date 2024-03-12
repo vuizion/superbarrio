@@ -75,10 +75,13 @@ class reference:
             elif heartId+1 > 3 and heartId+1 <= 6 and heartId < self.moving['playable'][1].get_remainingLife()+3 :
                 self.ath['heart'][heartId].affiche(screen)
 
+    def rangeColumnOnScreen(self):
+        firstColumn = (self.leftColumn - 1 if self.leftColumn != 0 else 0)
+        return range(firstColumn, self.leftColumn + 11)
+
     def smartShow(self, screen) -> None:
         self.selectLeftColumn()
-        firstColumn = (self.leftColumn - 1 if self.leftColumn != 0 else 0)
-        for columnID in range(firstColumn, self.leftColumn + 11):
+        for columnID in self.rangeColumnOnScreen():
             if columnID < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
                 for elem in self.elements[columnID]:
                     pixel_x = self.leftColumnPixel + (columnID - self.leftColumn)*self.block_x
@@ -112,7 +115,6 @@ class reference:
     
     def gravity(self, currentTick:int, PYGAME_SPEED):
         everyMoving = sum(self.moving.values(), [])
-        everyFixed = sum(self.fixed.values(), [])
 
         for oneMoving in everyMoving:
             oneMoving.jumpExecute(currentTick, self, PYGAME_SPEED)
@@ -122,9 +124,7 @@ class reference:
             if self.every_collision(oneMoving, 'b'):
                 isFalling = False
 
-            if oneMoving.check_jump_without_num(currentTick):
-                pass
-            else:
+            if not oneMoving.check_jump_without_num(currentTick):
                 isFalling = False
 
 
@@ -151,9 +151,23 @@ class reference:
                 if (obj.get_start_y() + obj.get_size_y() - 10) <= (oneFixed.get_start_y()):
                     return True
         return False
+    
+    def everyFixed(self) -> list:
+        everyFixed = []
+        for goodIdColumn in self.rangeColumnOnScreen():
+            if goodIdColumn < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
+                for elem in self.elements[goodIdColumn]:
+                    if elem != None : everyFixed.append(elem)
+        return everyFixed
 
     def every_collision (self, obj:object, direction:str) -> int:
-        everyFixed = sum(self.fixed.values(), [])
+        # everyFixed = sum(self.fixed.values(), [])
+
+        everyFixed = self.everyFixed()
+        for goodIdColumn in self.rangeColumnOnScreen():
+            if goodIdColumn < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
+                for elem in self.elements[goodIdColumn]:
+                    if elem != None : everyFixed.append(elem)
 
         listFixed = []
         for oneFixed in everyFixed:
@@ -189,9 +203,11 @@ class reference:
 
     def mapScroll(self, leftDirection:bool, PYGAME_SPEED, whichPlayer:object=None):
         everyObject = []
-        everyObject.append(sum(self.fixed.values(), []))
+        everyObject.append(self.everyFixed())
         everyObject.append(sum(self.moving.values(), []))
         everyObject = sum(everyObject, [])
+
+        self.leftColumnPixel += (PYGAME_SPEED if leftDirection else -PYGAME_SPEED) # On déplace les objets fixes enregistrés dans les colonnes
 
         for obj in everyObject:
             obj.move_start_x(PYGAME_SPEED if leftDirection else -PYGAME_SPEED)
