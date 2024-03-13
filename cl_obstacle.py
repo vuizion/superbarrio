@@ -1,8 +1,11 @@
 class obstacle:
     def __init__(self) -> None:
         pass
-    def difficulty_1_num_1(self) -> list:
-        obs = [
+    def difficulty_1(self, num:int) -> list:
+        obs = []
+
+        # Obstacle N°1
+        obs.append([
             [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -13,10 +16,11 @@ class obstacle:
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        ]
-        return obs
-    def difficulty_1_num_2(self) -> list:
-        obs = [
+        ])
+
+        # Obstacle N°2
+        obs.append([
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]
-        return obs
+        ])
+
+        return obs[num]

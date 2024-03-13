@@ -203,7 +203,9 @@ class reference:
         return result
     
 
-    def mapScroll(self, leftDirection:bool, PYGAME_SPEED, whichPlayer:object=None):
+    def mapScroll(self, leftDirection:bool):
+        PYGAME_SPEED = self.PYGAME_SPEED
+        
         everyObject = []
         everyObject.append(self.everyFixed())
         everyObject.append(sum(self.moving.values(), []))
@@ -226,7 +228,7 @@ class reference:
                     
     def add_obstacle(self) -> None:
         self.map.append([0, 0, 0, 0, 0.3, 0, 0, 2.2, 0]) # Point de respawn avant l'obstacle
-        for column in self.obstacle.difficulty_1_num_1():
+        for column in self.obstacle.difficulty_1(0):
             self.map.append(column)
         self.loadRemainingColumns()
 
@@ -247,4 +249,43 @@ class reference:
         elif block == 2.2:
             return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (120, 120, 120))
         return None
+
+    def movePlayer(self, playerNum:int, direction:str, tick:int=0):
+        thisPlayer = self.moving['playable'][playerNum]
+
+        if direction == 'd': # Le joueur a cliqué sur une touche de direction vers "la droite"
+            if (not self.every_collision(thisPlayer, 'd')):
+                if thisPlayer.get_start_x() + thisPlayer.get_size_x() >= 8*self.block_x:
+                    if self.noPlayerOnOtherSide(True):
+                        self.mapScroll(False)
+                        thisPlayer.move_start_x(self.PYGAME_SPEED)
+                else :
+                    thisPlayer.move_start_x(self.PYGAME_SPEED)
+                thisPlayer.set_lookDirection(0)
+
+        elif direction == 'g': # Le joueur a cliqué sur une touche de direction vers "la gauche"
+            if (not self.every_collision(thisPlayer, 'd')):
+                if thisPlayer.get_start_x() <= self.block_x: 
+                    if self.noPlayerOnOtherSide(False):
+                        self.mapScroll(True)
+                        thisPlayer.move_start_x(-self.PYGAME_SPEED)
+                else :
+                    thisPlayer.move_start_x(-self.PYGAME_SPEED)
+                thisPlayer.set_lookDirection(1)
+
+        elif direction == 'h': # Le joueur a cliqué sur une touche de direction vers "le haut"
+            thisPlayer.create_jump(tick)
+
+        elif direction == 'b': # Le joueur a cliqué sur une touche de direction vers "le bas"
+            pass # À IMPLEMENTER AVEC LES "plaques" DANS LA NOUVELLE MAP
+
+    def noPlayerOnOtherSide(self, isLeftSideToCheck:bool):
+        if isLeftSideToCheck:
+            for player in self.moving['playable']:
+                if player.get_start_x() <= self.block_x: return False
+        else: # On vérifie alors si qqn reste sur le coté droit
+            for player in self.moving['playable']:
+                if player.get_start_x() + player.get_size_x() >= 8*self.block_x: return False
+
+        return True # Si aucun joueur ne gène, on peut déplacer la map !
 

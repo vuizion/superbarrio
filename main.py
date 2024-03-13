@@ -17,7 +17,7 @@ PYGAME_HEIGHT = PYGAME_WIDTH*0.8
 PYGAME_SPEED = 3.8*SCREEN_RATIO
 
 # Est-ce qu'un deuxième joueur souhaite jouer ?
-multiplayer = False
+multiplayer = True
 
 # Créer un objet écran avec une largeur de 800 pixels et une hauteur de 600 pixels
 screen = pygame.display.set_mode((PYGAME_WIDTH, PYGAME_HEIGHT))
@@ -99,30 +99,6 @@ bg = pygame.image.load("img/bg.png")
 # Redimensionner l'image
 bg = pygame.transform.scale(bg, (10*case_width, 8*case_height))
 
-"""
-for colone_id in range(len(map)):
-    current_x = case_width*colone_id
-    for case_id in range(len(map[colone_id])):
-        case = map[colone_id][case_id]
-        current_y = (case_height*case_id)-(case_height/2)
-        if case == 0:
-            pass
-        elif case == 1:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*2, (100, 75, 25), ["img/sol1x2.png"]))
-        elif case == 1.1:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width*2, case_height*2, (100, 75, 25), ["img/sol2x2.png"]))
-        elif case == 2:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height, (120, 120, 120)))
-        elif case == 2.2:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*2, (120, 120, 120)))
-        elif case == 2.3:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*3, (120, 120, 120)))
-        elif case == 2.4:
-            Game.add_fixed_as('solid', hitbox(current_x, current_y, case_width, case_height*4, (120, 120, 120)))
-        elif case == 3:
-            Game.add_fixed_as('pierceable', hitbox(current_x, current_y+(5*case_height)/6, case_width, case_height/6, (0, 120, 120)))
-"""
-
 
 # Créer une variable pour contrôler la boucle principale
 running = True
@@ -136,11 +112,10 @@ while running:
     screen.fill((200, 150, 50))
     screen.blit(bg, (0,0))
 
-    # DEBUG AFFICHER LE BACKGROUND
-    # Game.get_ath_as('background')[0].affiche(screen, tick, Game, PYGAME_SPEED)
-
     # Récupérer l'état des touches du clavier
     keys = pygame.key.get_pressed()
+
+
 
 
 
@@ -150,38 +125,19 @@ while running:
 
     # Si la touche fléchée gauche est pressée, déplacer le carré vers la gauche
     if keys[pygame.K_q]:
-        if Game.every_collision(Game.get_moving_as('playable')[0], 'g'):
-            pass
-        elif Game.get_moving_as('playable')[0].get_start_x() <= PYGAME_WIDTH/5:
-            Game.mapScroll(True, PYGAME_SPEED)
-            Game.get_moving_as('playable')[0].move_start_x(-PYGAME_SPEED) # On déplace quand même le joueur
-            Game.get_moving_as('playable')[0].set_lookDirection(1)
-        else:
-            Game.get_moving_as('playable')[0].move_start_x(-PYGAME_SPEED)
-            Game.get_moving_as('playable')[0].set_lookDirection(1)
+        Game.movePlayer(0,'g')
 
     # Si la touche fléchée droite est pressée, déplacer le carré vers la droite
     if keys[pygame.K_d]:
-        if Game.every_collision(Game.get_moving_as('playable')[0], 'd'):
-            pass
-        elif Game.get_moving_as('playable')[0].get_start_x() + Game.get_moving_as('playable')[0].get_size_x() >= 4*PYGAME_WIDTH/5:
-            Game.mapScroll(False, PYGAME_SPEED)
-            Game.get_moving_as('playable')[0].move_start_x(PYGAME_SPEED) # On déplace quand même le joueur
-            Game.get_moving_as('playable')[0].set_lookDirection(0)
-        else:
-            Game.get_moving_as('playable')[0].move_start_x(PYGAME_SPEED)
-            Game.get_moving_as('playable')[0].set_lookDirection(0)
+        Game.movePlayer(0,'d')
 
     # Si la touche fléchée bas est pressée, déplacer le carré vers le bas
     if keys[pygame.K_s]:
         if Game.goDown(Game.get_moving_as('playable')[0]):
             Game.get_moving_as('playable')[0].move_start_y(PYGAME_SPEED)
-        else :
-            pass
 
     if (keys[pygame.K_SPACE] or keys[pygame.K_z]):
-        Game.get_moving_as('playable')[0].create_jump(tick)
-
+        Game.movePlayer(0,'h', tick)
 
 
 
@@ -191,27 +147,11 @@ while running:
 
     # Si la touche fléchée gauche est pressée, déplacer le carré vers la gauche
     if keys[pygame.K_LEFT] and multiplayer:
-        if Game.every_collision(Game.get_moving_as('playable')[1], 'g'):
-            pass
-        elif Game.get_moving_as('playable')[1].get_start_x() <= PYGAME_WIDTH/5:
-            Game.mapScroll(True, PYGAME_SPEED)
-            Game.get_moving_as('playable')[1].move_start_x(-PYGAME_SPEED) # On déplace quand même le joueur
-            Game.get_moving_as('playable')[1].set_lookDirection(1)
-        else:
-            Game.get_moving_as('playable')[1].move_start_x(-PYGAME_SPEED)
-            Game.get_moving_as('playable')[1].set_lookDirection(1)
+        Game.movePlayer(1,'g')
 
     # Si la touche fléchée droite est pressée, déplacer le carré vers la droite
     if keys[pygame.K_RIGHT] and multiplayer:
-        if Game.every_collision(Game.get_moving_as('playable')[1], 'd'):
-            pass
-        elif Game.get_moving_as('playable')[1].get_start_x() + Game.get_moving_as('playable')[1].get_size_x() >= 4*PYGAME_WIDTH/5:
-            Game.mapScroll(False, PYGAME_SPEED)
-            Game.get_moving_as('playable')[1].move_start_x(PYGAME_SPEED) # On déplace quand même le joueur
-            Game.get_moving_as('playable')[1].set_lookDirection(0)
-        else:
-            Game.get_moving_as('playable')[1].move_start_x(PYGAME_SPEED)
-            Game.get_moving_as('playable')[1].set_lookDirection(0)
+        Game.movePlayer(1,'d')
 
     # Si la touche fléchée bas est pressée, déplacer le carré vers le bas
     if keys[pygame.K_DOWN] and multiplayer:
@@ -221,16 +161,11 @@ while running:
             pass
 
     if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT]) and multiplayer:
-        Game.get_moving_as('playable')[1].create_jump(tick)
+        Game.movePlayer(1,'h', tick)
         
 
 
 
-
-
-
-
-    
 
 
     # Gérer les événements
