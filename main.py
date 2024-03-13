@@ -1,11 +1,9 @@
 # Importer les bibliothèques
 import pygame
-import time
 
 # Importer nos classes (cl)
 from cl_hitbox import hitbox
 from cl_reference import reference
-
 
 
 # Initialiser pygame
@@ -17,7 +15,7 @@ PYGAME_HEIGHT = PYGAME_WIDTH*0.8
 PYGAME_SPEED = 3.8*SCREEN_RATIO
 
 # Est-ce qu'un deuxième joueur souhaite jouer ?
-multiplayer = True
+multiplayer = False
 
 # Créer un objet écran avec une largeur de 800 pixels et une hauteur de 600 pixels
 screen = pygame.display.set_mode((PYGAME_WIDTH, PYGAME_HEIGHT))
@@ -36,47 +34,6 @@ if multiplayer : Game.add_moving_as('playable', hitbox('playable', PYGAME_WIDTH/
 # Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/9, PYGAME_HEIGHT*0.2, (120, 120, 120), ["img/spike.png"]))
 
 
-# Exemple de map
-# 0 : case vide
-# 1 : Élémént sol (1x2)
-# 1.1 : Élément sol plus grand (2x2)
-# 2 : Bloc solide
-# 2.2 : Mur de 2 blocs de hauteur
-# 2.3 : Mur de 3 blocs de hauteur
-# 2.4 : Mur de 4 blocs de hauteur
-# 3 : Plateforme d'un bloc de large
-
-map = [ [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 3, 0, 0, 0],
-        [0, 0, 0, 0, 3, 3, 0, 1.1, 0],
-        [0, 0, 0, 0, 3, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 3, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2.3, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 3, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 3, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0] ]
 
 case_width = PYGAME_WIDTH/10
 case_height = PYGAME_HEIGHT/8
@@ -95,9 +52,12 @@ if multiplayer :
     Game.add_ath_as('heart', hitbox('heart', 8.7*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
     Game.add_ath_as('heart', hitbox('heart', 9.3*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 
+
+
+
+# Fond d'écran
 bg = pygame.image.load("img/bg.png")
-# Redimensionner l'image
-bg = pygame.transform.scale(bg, (10*case_width, 8*case_height))
+bg = pygame.transform.scale(bg, (10*case_width, 8*case_height)) # Redimensionner l'image
 
 
 # Créer une variable pour contrôler la boucle principale
@@ -157,8 +117,6 @@ while running:
     if keys[pygame.K_DOWN] and multiplayer:
         if Game.goDown(Game.get_moving_as('playable')[1]):
             Game.get_moving_as('playable')[1].move_start_y(PYGAME_SPEED)
-        else :
-            pass
 
     if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT]) and multiplayer:
         Game.movePlayer(1,'h', tick)

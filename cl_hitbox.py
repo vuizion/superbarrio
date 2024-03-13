@@ -136,3 +136,9 @@ class hitbox:
     def relive(self, PYGAME_HEIGHT) :
         self.start_y = PYGAME_HEIGHT*0.2
         self.num_jump = d_max_jump
+
+    def alive(self):
+        """
+        Renvoit un booléan VRAI si le personnege est encore en vie
+        """
+        return self.remainingLife >= 1

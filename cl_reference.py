@@ -35,19 +35,6 @@ class reference:
 
         self.multiplayer = multiplayer
 
-        # Exemple de map
-        # 0 : case vide
-        # 0.1 : spawn du joueur 1
-        # 0.2 : spawn du joueur 2
-        # 0.3 : point de respawn pendant le parcours
-        # 1 : Élémént sol (1x2)
-        # 1.1 : Élément sol plus grand (2x2)
-        # 2 : Bloc solide
-        # 2.2 : Mur de 2 blocs de hauteur
-        # 2.3 : Mur de 3 blocs de hauteur
-        # 2.4 : Mur de 4 blocs de hauteur
-        # 3 : Plateforme d'un bloc de large
-
         self.map = [[0, 0, 0, 0, 0, 0, 0, 1.1, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0.1, 0, 0, 1.1, 0],
@@ -148,7 +135,13 @@ class reference:
         """
         Descendre d'une plateforme si elle le permet
         """
-        for oneFixed in self.fixed['pierceable']:
+        allPierceableOnScreen = []
+        for columnID in self.rangeColumnOnScreen():
+            if columnID < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
+                for elem in self.elements[columnID]:
+                    if elem != None and elem.type == 'pierceable': allPierceableOnScreen.append(elem)
+
+        for oneFixed in allPierceableOnScreen:
             if obj.check_collision(oneFixed):
                 if (obj.get_start_y() + obj.get_size_y() - 10) <= (oneFixed.get_start_y()):
                     return True
@@ -228,7 +221,7 @@ class reference:
                     
     def add_obstacle(self) -> None:
         self.map.append([0, 0, 0, 0, 0.3, 0, 0, 2.2, 0]) # Point de respawn avant l'obstacle
-        for column in self.obstacle.difficulty_1(0):
+        for column in self.obstacle.randomChoice(1):
             self.map.append(column)
         self.loadRemainingColumns()
 
@@ -248,6 +241,8 @@ class reference:
             return hitbox('solid', ref_x, ref_y, self.block_x*2, self.block_y*2, (100, 75, 25), ["img/sol2x2.png"])
         elif block == 2.2:
             return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (120, 120, 120))
+        elif block == 3:
+            return hitbox('pierceable', ref_x, ref_y+5/6, self.block_x, self.block_y/6, (0, 120, 120))
         return None
 
     def movePlayer(self, playerNum:int, direction:str, tick:int=0):
@@ -264,7 +259,7 @@ class reference:
                 thisPlayer.set_lookDirection(0)
 
         elif direction == 'g': # Le joueur a cliqué sur une touche de direction vers "la gauche"
-            if (not self.every_collision(thisPlayer, 'd')):
+            if (not self.every_collision(thisPlayer, 'g')):
                 if thisPlayer.get_start_x() <= self.block_x: 
                     if self.noPlayerOnOtherSide(False):
                         self.mapScroll(True)
@@ -277,15 +272,16 @@ class reference:
             thisPlayer.create_jump(tick)
 
         elif direction == 'b': # Le joueur a cliqué sur une touche de direction vers "le bas"
-            pass # À IMPLEMENTER AVEC LES "plaques" DANS LA NOUVELLE MAP
+            if self.goDown(thisPlayer):
+                thisPlayer.move_start_y(self.PYGAME_SPEED)
 
     def noPlayerOnOtherSide(self, isLeftSideToCheck:bool):
         if isLeftSideToCheck:
             for player in self.moving['playable']:
-                if player.get_start_x() <= self.block_x: return False
+                if player.get_start_x() <= self.block_x and player.alive(): return False
         else: # On vérifie alors si qqn reste sur le coté droit
             for player in self.moving['playable']:
-                if player.get_start_x() + player.get_size_x() >= 8*self.block_x: return False
+                if player.get_start_x() + player.get_size_x() >= 8*self.block_x and player.alive(): return False
 
         return True # Si aucun joueur ne gène, on peut déplacer la map !
 
