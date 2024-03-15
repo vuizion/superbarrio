@@ -118,7 +118,7 @@ while running:
         if Game.goDown(Game.get_moving_as('playable')[1]):
             Game.get_moving_as('playable')[1].move_start_y(PYGAME_SPEED)
 
-    if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT] or keys[pygame.K0_KP0]) and multiplayer:
+    if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT] or keys[pygame.K_KP0]) and multiplayer:
         Game.movePlayer(1,'h', tick)
         
 

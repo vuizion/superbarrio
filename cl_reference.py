@@ -242,7 +242,11 @@ class reference:
         elif block == 2.2:
             return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (120, 120, 120))
         elif block == 3:
-            return hitbox('pierceable', ref_x, ref_y+5/6, self.block_x, self.block_y/6, (0, 120, 120))
+            return hitbox('pierceable', ref_x, ref_y+5/6, self.block_x, self.block_y/6, (214, 40, 40), ["img/platform.png"])
+        elif block == 4:
+            return hitbox('solid', ref_x, ref_y-0.5, self.block_x, self.block_y*1.5, (120, 120, 120), ["img/spike.png"])
+        elif block == 4.1:
+            return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y, (148, 148, 148), ["img/rock.png"])
         return None
 
     def movePlayer(self, playerNum:int, direction:str, tick:int=0):
