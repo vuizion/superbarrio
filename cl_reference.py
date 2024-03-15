@@ -29,7 +29,7 @@ class reference:
         self.SCREEN_RATIO = SCREEN_RATIO
         self.PYGAME_WIDTH = 800*self.SCREEN_RATIO
         self.PYGAME_HEIGHT = self.PYGAME_WIDTH*0.8
-        self.PYGAME_SPEED = 3.8*self.SCREEN_RATIO
+        self.PYGAME_SPEED = 3.8*self.SCREEN_RATIO**2
         self.block_x = int(self.PYGAME_WIDTH/10)
         self.block_y = int(self.PYGAME_HEIGHT/8)
 

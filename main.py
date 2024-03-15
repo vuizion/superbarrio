@@ -12,7 +12,7 @@ pygame.init()
 SCREEN_RATIO = 1
 PYGAME_WIDTH = 800*SCREEN_RATIO
 PYGAME_HEIGHT = PYGAME_WIDTH*0.8
-PYGAME_SPEED = 3.8*SCREEN_RATIO
+PYGAME_SPEED = 3.8*SCREEN_RATIO**2
 
 # Est-ce qu'un deuxième joueur souhaite jouer ?
 multiplayer = False
@@ -118,7 +118,7 @@ while running:
         if Game.goDown(Game.get_moving_as('playable')[1]):
             Game.get_moving_as('playable')[1].move_start_y(PYGAME_SPEED)
 
-    if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT]) and multiplayer:
+    if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT] or keys[pygame.K0_KP0]) and multiplayer:
         Game.movePlayer(1,'h', tick)
         
 
