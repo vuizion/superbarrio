@@ -65,8 +65,21 @@ running = True
 tick = 0
 
 
+
+
+
+###########################
+# Chargement de la police depuis un fichier ttf
+chemin_police = "font/pixel.ttf"  # Spécifiez le chemin vers votre fichier de police
+taille_police = 32
+police = pygame.font.Font(chemin_police, taille_police)
+###########################
+
+
+
 # Créer une boucle principale
 while running:
+
 
     # Remplir l'écran avec la couleur souhaitée
     screen.fill((200, 150, 50))
@@ -143,6 +156,16 @@ while running:
     if tick%2 == 0:
         Game.smartShow(screen)
         Game.showCurrentElement(PYGAME_WIDTH, screen, tick, PYGAME_SPEED)
+
+        ###########################
+        # Définition du texte
+        texte_surface = police.render(Game.getScore(), True, (255, 255, 255))  # Création de la surface du texte
+        # Positionnement du texte au centre de la fenêtre
+        texte_rect = texte_surface.get_rect(center=(PYGAME_WIDTH/2, 0.46*case_height))
+        # Affichage du texte sur la surface de la fenêtre
+        screen.blit(texte_surface, texte_rect)
+        ###########################
+
         # Mettre à jour l'affichage de l'écran
         pygame.display.flip()
 

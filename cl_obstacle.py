@@ -14,6 +14,7 @@ from random import randint
     # 3 : Plateforme d'un bloc de large
     # 4 : Élément décoratif : cactus
     # 4.1 : Déco : rocher
+    # 4.2 : Déco : baril
 
 class obstacle:
     def __init__(self) -> None:

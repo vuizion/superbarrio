@@ -35,15 +35,20 @@ class reference:
 
         self.multiplayer = multiplayer
 
+        self.score = 0
+
         self.map = [[0, 0, 0, 0, 0, 0, 0, 1.1, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0.1, 0, 0, 1.1, 0],
                     [0, 0, 0, 0, 0.2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 1.1, 0],
+                    [0, 0, 0, 0, 0, 4.2, 4.2, 1.1, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0]]
         
         self.obstacle = obstacle()
         self.add_obstacle()
+
+    def getScore(self):
+        return str(self.score)
 
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
         everyObject = []
@@ -80,6 +85,8 @@ class reference:
         if self.leftColumnPixel < -self.block_x:
             self.leftColumn += 1
             self.leftColumnPixel += self.block_x
+            # On fait avancer le score si nécessaire
+            if self.score < self.leftColumn : self.score = self.leftColumn
         elif self.leftColumnPixel > 0 and self.leftColumn > 0:
             self.leftColumn -= 1
             self.leftColumnPixel -= self.block_x
@@ -247,6 +254,8 @@ class reference:
             return hitbox('solid', ref_x, ref_y-0.5, self.block_x, self.block_y*1.5, (120, 120, 120), ["img/spike.png"])
         elif block == 4.1:
             return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y, (148, 148, 148), ["img/rock.png"])
+        elif block == 4.2:
+            return hitbox('solid', (1/6)+ref_x, ref_y, (2/3)*self.block_x, self.block_y, (130, 130, 235), ["img/baril.png"])
         return None
 
     def movePlayer(self, playerNum:int, direction:str, tick:int=0):
