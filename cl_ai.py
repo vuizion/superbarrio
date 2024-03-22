@@ -9,6 +9,9 @@ class ai:
         self.relative_move_x = 0 # De combien de block l'ia s'est éloigné de son spawn
         self.move_tick = 0 # Si le tick est dans un interval donné, on continue le movement
         self.speedMove = 20 # Nombre de ticks nécessaires pour se déplacer d'une longueur de block
+
+    def get_spawn_x(self):
+        return self.spawn_x_ref
     
     def move(self) -> None:
         if self.move_tick == 0:
@@ -23,7 +26,7 @@ class ai:
         else:
             self.move_tick = 0
 
-    def show(self, screen) -> None:
-        self.stock_hitbox.affiche(screen)
+    def show(self, screen, pixel_x) -> None:
+        self.stock_hitbox.aiShow(screen, pixel_x)
     
     

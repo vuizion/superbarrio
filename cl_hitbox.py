@@ -142,3 +142,7 @@ class hitbox:
         Renvoit un booléan VRAI si le personnege est encore en vie
         """
         return self.remainingLife >= 1
+    
+    def aiShow(self, screen, pixel_x):
+        self.start_x = pixel_x
+        self.affiche(screen)

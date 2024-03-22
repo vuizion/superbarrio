@@ -67,7 +67,7 @@ tick = 0
 
 
 # test de l'ia
-Game.addAi(5)
+Game.addAi(8, 6)
 
 
 

@@ -73,7 +73,6 @@ class reference:
         return range(firstColumn, self.leftColumn + 11)
 
     def smartShow(self, screen) -> None:
-        self.showAi(screen) # On oublie pas d'afficher toutes les IAs
         self.selectLeftColumn()
         for columnID in self.rangeColumnOnScreen():
             if columnID < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
@@ -81,7 +80,8 @@ class reference:
                     pixel_x = self.leftColumnPixel + (columnID - self.leftColumn)*self.block_x
                     if elem != None : elem.smartShowObject(screen, pixel_x, self.block_y)
             else : self.add_obstacle() # Puisque la map va se terminer, on ajoute un nouveau qui va mécaniquement ajouter de la longeur à la map
-
+        
+        self.showAi(screen) # On oublie pas d'afficher toutes les IAs
 
     def selectLeftColumn(self):
         if self.leftColumnPixel < -self.block_x:
@@ -300,12 +300,12 @@ class reference:
 
         return True # Si aucun joueur ne gène, on peut déplacer la map !
     
-    def addAi(self, spawn_x_ref) -> None:
+    def addAi(self, spawn_x_ref, spawn_y_block) -> None:
         self.moving['ai'].append(
             ai(self.block_x, hitbox(
                 'ai',
                 spawn_x_ref,
-                5,
+                spawn_y_block*self.block_y,
                 self.block_x/2,
                 self.block_y/2,
                 (100, 240, 110),
@@ -315,5 +315,6 @@ class reference:
 
     def showAi(self, screen) -> None:
         for oneAi in self.moving["ai"]:
-            oneAi.show(screen)
+            pixel_x = self.leftColumnPixel + (oneAi.get_spawn_x() - self.leftColumn)*self.block_x + self.block_x/4
+            oneAi.show(screen, pixel_x)
 
