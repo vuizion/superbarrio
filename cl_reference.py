@@ -1,6 +1,7 @@
 # Importer nos classes (cl)
 from cl_obstacle import obstacle
 from cl_hitbox import hitbox
+from cl_ai import ai
 
 
 class reference:
@@ -53,7 +54,7 @@ class reference:
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
         everyObject = []
         everyObject.append(sum(self.fixed.values(), []))
-        everyObject.append(sum(self.moving.values(), []))
+        everyObject.append(self.moving['playable']) # """sum(self.moving.values(), [])"""
         everyObject = sum(everyObject, [])
 
         for obj in everyObject:
@@ -72,6 +73,7 @@ class reference:
         return range(firstColumn, self.leftColumn + 11)
 
     def smartShow(self, screen) -> None:
+        self.showAi(screen) # On oublie pas d'afficher toutes les IAs
         self.selectLeftColumn()
         for columnID in self.rangeColumnOnScreen():
             if columnID < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
@@ -110,7 +112,7 @@ class reference:
         return self.ath[key]
     
     def gravity(self, currentTick:int, PYGAME_SPEED):
-        everyMoving = sum(self.moving.values(), [])
+        everyMoving = self.moving['playable'] #sum(self.moving.values(), []) DEBUG pour retirer les ias
 
         for oneMoving in everyMoving:
             oneMoving.jumpExecute(currentTick, self, PYGAME_SPEED)
@@ -208,7 +210,7 @@ class reference:
         
         everyObject = []
         everyObject.append(self.everyFixed())
-        everyObject.append(sum(self.moving.values(), []))
+        everyObject.append(self.moving['playable'])#sum(self.moving.values(), []))
         everyObject = sum(everyObject, [])
 
         self.leftColumnPixel += (PYGAME_SPEED if leftDirection else -PYGAME_SPEED) # On déplace les objets fixes enregistrés dans les colonnes
@@ -297,4 +299,21 @@ class reference:
                 if player.get_start_x() + player.get_size_x() >= 8*self.block_x and player.alive(): return False
 
         return True # Si aucun joueur ne gène, on peut déplacer la map !
+    
+    def addAi(self, spawn_x_ref) -> None:
+        self.moving['ai'].append(
+            ai(self.block_x, hitbox(
+                'ai',
+                spawn_x_ref,
+                5,
+                self.block_x/2,
+                self.block_y/2,
+                (100, 240, 110),
+                ["img/avocado.png"]
+            ), spawn_x_ref)
+        )
+
+    def showAi(self, screen) -> None:
+        for oneAi in self.moving["ai"]:
+            oneAi.show(screen)
 
