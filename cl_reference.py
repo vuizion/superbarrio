@@ -205,6 +205,23 @@ class reference:
         return result
     
 
+    def ia_collision (self, ai:object, direction:str) -> bool:
+
+        # On vérifie si un joueur touche la gauche ou la droite de l'ia pour le tuer
+        for player in self.moving["playable"]:
+            if ai.get_ai_hitbox().check_collision(player):
+                top_touch = ai.get_ai_hitbox().get_start_y() + self.block_y/6 > player.get_start_y()+player.get_size_y()
+                if top_touch:
+                    self.removeAi(ai)
+                else:
+                    player.move_start_y(20*self.block_y) # En attendant de tuer le joueur, on l'envoit dans le vide
+
+        # On vérifie si un joueur écrase par le dessus l'ia, afin qu'elle meure
+
+        # On vérifie si l'ia ne tappe pas un obstacle
+        return self.every_collision(ai.get_ai_hitbox(), direction)
+    
+
     def mapScroll(self, leftDirection:bool):
         PYGAME_SPEED = self.PYGAME_SPEED
         
@@ -302,7 +319,7 @@ class reference:
     
     def addAi(self, spawn_x_ref, spawn_y_block) -> None:
         self.moving['ai'].append(
-            ai(self.block_x, hitbox(
+            ai(self, self.block_x, hitbox(
                 'ai',
                 spawn_x_ref,
                 spawn_y_block*self.block_y,
@@ -312,6 +329,12 @@ class reference:
                 ["img/avocado.png"]
             ), spawn_x_ref)
         )
+
+    def removeAi(self, ai) -> None:
+        for oneAiIndex in range(len(self.moving["ai"])):
+            if self.moving["ai"][oneAiIndex] == ai:
+                self.moving["ai"].pop(oneAiIndex)
+                break
 
     def showAi(self, screen) -> None:
         for oneAi in self.moving["ai"]:

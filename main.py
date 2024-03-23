@@ -68,6 +68,8 @@ tick = 0
 
 # test de l'ia
 Game.addAi(8, 6)
+Game.addAi(7, 6)
+Game.addAi(6, 6)
 
 
 
