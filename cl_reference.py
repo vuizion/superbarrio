@@ -43,7 +43,7 @@ class reference:
                     [0, 0, 0, 0, 0.1, 0, 0, 1.1, 0],
                     [0, 0, 0, 0, 0.2, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 4.2, 4.2, 1.1, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+                    [0, 0, 0, 0, 0, 0, 9, 0, 0]]
         
         self.obstacle = obstacle()
         self.add_obstacle()
@@ -111,11 +111,26 @@ class reference:
     def get_ath_as(self, key:str):
         return self.ath[key]
     
-    def gravity(self, currentTick:int, PYGAME_SPEED):
-        everyMoving = self.moving['playable'] #sum(self.moving.values(), []) DEBUG pour retirer les ias
+    def gravity(self, currentTick:int):
+        self.gravityForPlayer(currentTick)
+
+        for oneAi in self.moving['ai']:
+            hitAi = oneAi.get_ai_hitbox()
+            if not self.every_collision(hitAi, 'b') and hitAi.get_start_x() < self.PYGAME_WIDTH:
+                speedGravity = (currentTick - hitAi.get_tick_fall())*0.6*(self.PYGAME_SPEED/4)
+                if speedGravity > (9*self.PYGAME_SPEED/4):
+                    speedGravity = (9*self.PYGAME_SPEED/4)
+
+                if speedGravity > 9: # Sécurité : ne pas traverser les planchers
+                    speedGravity = 9
+
+                hitAi.move_start_y(speedGravity)
+    
+    def gravityForPlayer(self, currentTick:int):
+        everyMoving = self.moving["playable"]
 
         for oneMoving in everyMoving:
-            oneMoving.jumpExecute(currentTick, self, PYGAME_SPEED)
+            oneMoving.jumpExecute(currentTick, self, self.PYGAME_SPEED)
 
             isFalling = True
 
@@ -127,9 +142,9 @@ class reference:
 
 
             if isFalling:
-                speedGravity = (currentTick - oneMoving.get_tick_fall())*0.6*(PYGAME_SPEED/4)
-                if speedGravity > (9*PYGAME_SPEED/4):
-                    speedGravity = (9*PYGAME_SPEED/4)
+                speedGravity = (currentTick - oneMoving.get_tick_fall())*0.6*(self.PYGAME_SPEED/4)
+                if speedGravity > (9*self.PYGAME_SPEED/4):
+                    speedGravity = (9*self.PYGAME_SPEED/4)
 
                 if speedGravity > 9: # Sécurité : ne pas traverser les planchers
                     speedGravity = 9
@@ -235,15 +250,25 @@ class reference:
         for obj in everyObject:
             obj.move_start_x(PYGAME_SPEED if leftDirection else -PYGAME_SPEED)
 
-    def checkDeath(self, PYGAME_HEIGHT, screen, tick, PYGAME_SPEED):
+    def checkDeath(self):
         for player in self.moving['playable']:
-            if player.isDeath(PYGAME_HEIGHT):
+            if player.isDeath(self.PYGAME_HEIGHT):
                 if player.get_remainingLife() >= 1 :
-                    player.relive(PYGAME_HEIGHT)
+                    player.relive(self.PYGAME_HEIGHT)
                 else :
                     pass
                     #print("C'est finit tu es mort")
                 # self.ath['text'][0].affiche(screen, tick, self, PYGAME_SPEED)
+        listKilledAi = []
+        for oneAiId in range(len(self.moving['ai'])):
+            hitAi = self.moving['ai'][oneAiId].get_ai_hitbox()
+            if hitAi.isDeath(self.PYGAME_HEIGHT):
+                listKilledAi.append(oneAiId)
+
+        listKilledAi.sort(reverse=True)
+        for aiToKill in listKilledAi:
+            oldAi = self.moving['ai'].pop(aiToKill)
+            del oldAi
                     
     def add_obstacle(self) -> None:
         self.map.append([0, 0, 0, 0, 0.3, 0, 0, 2.2, 0]) # Point de respawn avant l'obstacle
@@ -256,7 +281,8 @@ class reference:
             columnToAdd = []
             for blockId in range(len(self.map[newColId])):
                 block = self.map[newColId][blockId]
-                if block != 0 : columnToAdd.append(self.createRealHitbox(block, newColId, blockId))
+                if block >= 9 : self.createRealHitbox(block, newColId, blockId)
+                elif block != 0 : columnToAdd.append(self.createRealHitbox(block, newColId, blockId))
             self.elements.append(columnToAdd)
         self.loadedColumns = len(self.map)
 
@@ -275,6 +301,8 @@ class reference:
             return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y, (148, 148, 148), ["img/rock.png"])
         elif block == 4.2:
             return hitbox('solid', (1/6)+ref_x, ref_y, (2/3)*self.block_x, self.block_y, (130, 130, 235), ["img/baril.png"])
+        elif block == 9:
+            self.addAi(ref_x, ref_y)
         return None
 
     def movePlayer(self, playerNum:int, direction:str, tick:int=0):
@@ -326,7 +354,8 @@ class reference:
                 self.block_x/2,
                 self.block_y/2,
                 (100, 240, 110),
-                ["img/avocado.png"]
+                ["img/avocado.gif"],
+                True
             ), spawn_x_ref)
         )
 
@@ -339,5 +368,5 @@ class reference:
     def showAi(self, screen) -> None:
         for oneAi in self.moving["ai"]:
             pixel_x = self.leftColumnPixel + (oneAi.get_spawn_x() - self.leftColumn)*self.block_x + self.block_x/4
-            oneAi.show(screen, pixel_x)
+            oneAi.show(screen, pixel_x, self.PYGAME_WIDTH)
 

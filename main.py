@@ -65,12 +65,12 @@ running = True
 tick = 0
 
 
-
+"""
 # test de l'ia
 Game.addAi(8, 6)
 Game.addAi(7, 6)
 Game.addAi(6, 6)
-
+"""
 
 
 ###########################
@@ -150,11 +150,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    Game.gravity(tick, PYGAME_SPEED)
+    Game.gravity(tick)
 
     # Éléments à éxécuter moins souvent
     if tick%10 == 0:
-        Game.checkDeath(PYGAME_HEIGHT, screen, tick, PYGAME_SPEED)
+        Game.checkDeath()
 
 
     # Afficher les éléments en fonction de leur hitbox

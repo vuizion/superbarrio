@@ -56,8 +56,12 @@ class ai:
 
             self.move_tick = 0
 
-    def show(self, screen, pixel_x) -> None:
-        self.move()
+    def show(self, screen, pixel_x, PYGAME_WIDTH) -> None:
+
+        # On vérifie que l'ia est à l'ecran avant de la faire bouger
+        if self.stock_hitbox.get_start_x() < PYGAME_WIDTH:
+            self.move()
+
         self.game_reference.ia_collision(self, "d")
         self.stock_hitbox.aiShow(screen, pixel_x+self.relative_pixel_x)
     
