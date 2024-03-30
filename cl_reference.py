@@ -36,19 +36,24 @@ class reference:
 
         self.multiplayer = multiplayer
 
+        self.scoreDistance = 0
+        self.scoreAi = 0
+        self.pointToAddAiKilled = 5 # Nombre de point à ajouter quand on tue une AI
+
         self.score = 0
 
         self.map = [[0, 0, 0, 0, 0, 0, 0, 1.1, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0.1, 0, 0, 1.1, 0],
-                    [0, 0, 0, 0, 0.2, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 4.2, 4.2, 1.1, 0],
-                    [0, 0, 0, 0, 0, 0, 9, 0, 0]]
+                    [0, 0, 0, 0, 0.2, 0, 4.2, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 9, 1.1, 0],
+                    [0, 0, 0, 0, 0, 0, 4.2, 0, 0]]
         
         self.obstacle = obstacle()
         self.add_obstacle()
 
     def getScore(self):
+        self.score = self.scoreDistance + self.scoreAi
         return str(self.score)
 
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
@@ -88,7 +93,7 @@ class reference:
             self.leftColumn += 1
             self.leftColumnPixel += self.block_x
             # On fait avancer le score si nécessaire
-            if self.score < self.leftColumn : self.score = self.leftColumn
+            if self.scoreDistance < self.leftColumn : self.scoreDistance = self.leftColumn
         elif self.leftColumnPixel > 0 and self.leftColumn > 0:
             self.leftColumn -= 1
             self.leftColumnPixel -= self.block_x
@@ -225,9 +230,10 @@ class reference:
         # On vérifie si un joueur touche la gauche ou la droite de l'ia pour le tuer
         for player in self.moving["playable"]:
             if ai.get_ai_hitbox().check_collision(player):
-                top_touch = ai.get_ai_hitbox().get_start_y() + self.block_y/6 > player.get_start_y()+player.get_size_y()
+                top_touch = ai.get_ai_hitbox().get_start_y() + self.block_y/4 > player.get_start_y()+player.get_size_y()
                 if top_touch:
                     self.removeAi(ai)
+                    self.scoreAi += self.pointToAddAiKilled
                 else:
                     player.move_start_y(20*self.block_y) # En attendant de tuer le joueur, on l'envoit dans le vide
 
@@ -300,7 +306,7 @@ class reference:
         elif block == 4.1:
             return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y, (148, 148, 148), ["img/rock.png"])
         elif block == 4.2:
-            return hitbox('solid', (1/6)+ref_x, ref_y, (2/3)*self.block_x, self.block_y, (130, 130, 235), ["img/baril.png"])
+            return hitbox('solid', ref_x, ref_y, (2/3)*self.block_x, self.block_y, (130, 130, 235), ["img/baril.png"], gapX=(self.block_x/6))
         elif block == 9:
             self.addAi(ref_x, ref_y)
         return None
@@ -354,8 +360,7 @@ class reference:
                 self.block_x/2,
                 self.block_y/2,
                 (100, 240, 110),
-                ["img/avocado.gif"],
-                True
+                ["img/avocado.gif"]
             ), spawn_x_ref)
         )
 

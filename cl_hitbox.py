@@ -6,7 +6,36 @@ d_max_jump = 3 # depuis la dernière plateforme
 d_tick_delay_jump = 22
 
 class hitbox:
-    def __init__ (self, hitboxType:str, reference_x:int, reference_y:int, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg=None, canJump:bool=False) :
+    def __init__ (self, hitboxType:str, reference_x:int, reference_y:int, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg:list=None, canJump:bool=False, gapX:float=0) :
+        
+        """
+        Initialise une instance de la classe 'hitbox'.
+
+        :param hitboxType: Quel objet du jeu cette hitbox est censé représenter ?
+        :type hitboxType: String
+
+        :param reference_x: Nombre de cases d'abscisse, à l'horizontale, où est placé cet objet dans la map. 0 est à gauche.
+        :type reference_x: Integer
+        :param reference_y: Nombre de cases d'ordonné, à la verticale, où est placé cet objet dans la map. 0 est en haut.
+        :type reference_y: Integer
+
+        :param size_x: Taille en largeur de l'élément.
+        :type size_x: Floating
+        :param size_y: Taille en hauteur de l'élément.
+        :type size_y: Floating
+
+        :param color: Dans le cas où aucune image n'est chargée pour l'objet, on affiche une couleur à l'emplacement de la hitbox. Le format à respecter est RGB : (255, 255, 255)
+        :type color: Tuple
+        :param srcImg: Sources d'une ou plusieurs images impérativement en STRING enregistrées dans une tableau LIST.
+        :type srcImg: List
+
+        :param canJump: Par défaut en False, cette option active les méthodes permettant à l'objet de sauter.
+        :type canJump: Boolean
+
+        :param gapX: Un possible décallage de l'objet sur l'axe des abscisses, où l'unité est le nombre de pixel de la référence de X (exemple : 80px)
+        :type gapX: Floating
+        """
+
         self.start_x = reference_x # DEBUG
         self.start_y = reference_y # DEBUG
         self.size_x = int(size_x)
@@ -14,6 +43,7 @@ class hitbox:
         self.color = color
         self.srcImg = srcImg
 
+        self.gapX = gapX # Un possible décallage de l'objet sur l'axe des abscisses, où l'unité est le nombre de pixel de la référence de X (exemple : 80px)
         self.reference_x = reference_x
         self.reference_y = reference_y
 
@@ -123,7 +153,7 @@ class hitbox:
             screen.blit(image, (self.start_x, self.start_y))
     
     def smartShowObject(self, screen, pixel_x, block_y):
-        self.start_x = pixel_x
+        self.start_x = pixel_x + self.gapX
         self.start_y = self.reference_y * block_y - block_y/2
         self.affiche(screen)
     

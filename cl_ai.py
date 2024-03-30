@@ -24,11 +24,23 @@ class ai:
     def get_ai_hitbox(self):
         return self.stock_hitbox
     
+    def check_side_obstacles(self, direction:str):
+        # On vérifie si elle ne touche pas un obstacle latéralement, sinon on la fait revenir sur ses pas, jusqu'à la référence précédente
+        if self.game_reference.every_collision(self.stock_hitbox, direction):
+
+            if direction == 'd':
+                self.relative_move_x += 1
+                self.move_tick = -(self.speedMove - self.move_tick)
+            else:
+                self.relative_move_x -= 1
+                self.move_tick = self.speedMove + self.move_tick
+    
     def move(self) -> None:
+
         if self.move_tick == 0:
             # L'ia n'est pas encore en train de bouger
 
-            # On vérifie si elle ne s'est pas trop éloigné d'abord
+            # On vérifie si elle ne s'est pas trop éloigné
             if self.relative_move_x >= self.max_block:
                 self.move_tick -= 1
             elif self.relative_move_x <= -self.max_block:
@@ -44,10 +56,12 @@ class ai:
             # L'ia est en cours de déplacement vers la droite
             self.move_tick += 1
             self.relative_pixel_x += self.realSpeed
+            self.check_side_obstacles('d')
         elif self.move_tick < 0 and self.move_tick > -self.speedMove:
             # L'ia est en cours de déplacement vers la gauche
             self.move_tick -= 1
             self.relative_pixel_x -= self.realSpeed
+            self.check_side_obstacles('g')
         else:
             if self.move_tick > 0:
                 self.relative_move_x += 1
