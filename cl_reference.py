@@ -48,6 +48,9 @@ class reference:
                     [0, 0, 0, 0, 0.2, 0, 4.2, 0, 0],
                     [0, 0, 0, 0, 0, 0, 9, 1.1, 0],
                     [0, 0, 0, 0, 0, 0, 4.2, 0, 0]]
+
+        self.currentSpawnPoint = 6
+        self.canRespawn = True
         
         self.obstacle = obstacle()
         self.add_obstacle()
@@ -83,8 +86,9 @@ class reference:
             if columnID < len(self.elements): # Notre ID existe bien dans la liste elements qui enregistre tous nos objets
                 for elem in self.elements[columnID]:
                     pixel_x = self.leftColumnPixel + (columnID - self.leftColumn)*self.block_x
-                    if elem != None : elem.smartShowObject(screen, pixel_x, self.block_y)
-            else : self.add_obstacle() # Puisque la map va se terminer, on ajoute un nouveau qui va mécaniquement ajouter de la longeur à la map
+                    if elem != None :
+                        elem.smartShowObject(screen, pixel_x, self.block_y)
+            else : self.add_obstacle() # Puisque la map va se terminer, on ajoute un nouvel obstalce qui va mécaniquement ajouter de la longeur à la map
         
         self.showAi(screen) # On oublie pas d'afficher toutes les IAs
 
@@ -139,7 +143,7 @@ class reference:
 
             isFalling = True
 
-            if self.every_collision(oneMoving, 'b'):
+            if self.every_collision(oneMoving, 'b', True):
                 isFalling = False
 
             if not oneMoving.check_jump_without_num(currentTick):
@@ -184,7 +188,7 @@ class reference:
                     if elem != None : everyFixed.append(elem)
         return everyFixed
 
-    def every_collision (self, obj:object, direction:str) -> int:
+    def every_collision (self, obj:object, direction:str, updateSpawnPoint:bool=False) -> int:
         # everyFixed = sum(self.fixed.values(), [])
 
         everyFixed = self.everyFixed()
@@ -204,6 +208,9 @@ class reference:
             for obstacle in listFixed:
                 if (obj.get_start_y() + obj.get_size_y() - 10) <= (obstacle.get_start_y()):
                     result = True
+                    # Si un joueur touche un obstacle de Spawn Point, on sauvegarde l'absisse de ce nouveau spawn
+                    if updateSpawnPoint and obstacle.spawnPoint:
+                        self.currentSpawnPoint = obstacle.reference_x
         
         if direction == 'h':
             for obstacle in listFixed:
@@ -232,19 +239,18 @@ class reference:
             if ai.get_ai_hitbox().check_collision(player):
                 top_touch = ai.get_ai_hitbox().get_start_y() + self.block_y/4 > player.get_start_y()+player.get_size_y()
                 if top_touch:
+                    # Si un joueur écrase par le dessus une ia, elle meure
                     self.removeAi(ai)
                     self.scoreAi += self.pointToAddAiKilled
                 else:
                     player.move_start_y(20*self.block_y) # En attendant de tuer le joueur, on l'envoit dans le vide
 
-        # On vérifie si un joueur écrase par le dessus l'ia, afin qu'elle meure
-
         # On vérifie si l'ia ne tappe pas un obstacle
         return self.every_collision(ai.get_ai_hitbox(), direction)
     
 
-    def mapScroll(self, leftDirection:bool):
-        PYGAME_SPEED = self.PYGAME_SPEED
+    def mapScroll(self, leftDirection:bool, speed=None):
+        PYGAME_SPEED = self.PYGAME_SPEED if speed == None else speed
         
         everyObject = []
         everyObject.append(self.everyFixed())
@@ -255,6 +261,24 @@ class reference:
 
         for obj in everyObject:
             obj.move_start_x(PYGAME_SPEED if leftDirection else -PYGAME_SPEED)
+
+    def callRespawn(self):
+        if self.canRespawn:
+            self.canRespawn = False
+            self.scrollMapToSpawnPoint()
+
+    def scrollMapToSpawnPoint(self):
+        dist = (self.currentSpawnPoint - self.leftColumn - 4)*self.block_x + self.leftColumnPixel
+        leftDirection = True if dist < 0 else False
+        self.mapScroll(leftDirection, self.block_x/10)
+
+        dist = abs(dist)-self.block_x/10
+        if dist < 0:
+            self.canRespawn = True
+        else :
+            self.scrollMapToSpawnPoint()
+        
+
 
     def checkDeath(self):
         for player in self.moving['playable']:
@@ -294,19 +318,19 @@ class reference:
 
     def createRealHitbox(self, block:float, ref_x:int, ref_y:int) -> object:
         if block == 1:
-            return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (100, 75, 25), ["img/sol1x2.png"])
+            return hitbox(self, 'solid', ref_x, ref_y, self.block_x, self.block_y*2, (100, 75, 25), ["img/sol1x2.png"])
         elif block == 1.1:
-            return hitbox('solid', ref_x, ref_y, self.block_x*2, self.block_y*2, (100, 75, 25), ["img/sol2x2.png"])
+            return hitbox(self, 'solid', ref_x, ref_y, self.block_x*2, self.block_y*2, (100, 75, 25), ["img/sol2x2.png"])
         elif block == 2.2:
-            return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y*2, (120, 120, 120))
+            return hitbox(self, 'solid', ref_x, ref_y, self.block_x, self.block_y*2, (120, 120, 120), ["img/spawnoff.png", "img/spawnpoint.png"], spawnPoint=True)
         elif block == 3:
-            return hitbox('pierceable', ref_x, ref_y+5/6, self.block_x, self.block_y/6, (214, 40, 40), ["img/platform.png"])
+            return hitbox(self, 'pierceable', ref_x, ref_y+5/6, self.block_x, self.block_y/6, (214, 40, 40), ["img/platform.png"])
         elif block == 4:
-            return hitbox('solid', ref_x, ref_y-0.5, self.block_x, self.block_y*1.5, (120, 120, 120), ["img/spike.png"])
+            return hitbox(self, 'solid', ref_x, ref_y-0.5, self.block_x, self.block_y*1.5, (120, 120, 120), ["img/spike.png"])
         elif block == 4.1:
-            return hitbox('solid', ref_x, ref_y, self.block_x, self.block_y, (148, 148, 148), ["img/rock.png"])
+            return hitbox(self, 'solid', ref_x, ref_y, self.block_x, self.block_y, (148, 148, 148), ["img/rock.png"])
         elif block == 4.2:
-            return hitbox('solid', ref_x, ref_y, (2/3)*self.block_x, self.block_y, (130, 130, 235), ["img/baril.png"], gapX=(self.block_x/6))
+            return hitbox(self, 'solid', ref_x, ref_y, (2/3)*self.block_x, self.block_y, (130, 130, 235), ["img/baril.png"], gapX=(self.block_x/6))
         elif block == 9:
             self.addAi(ref_x, ref_y)
         return None
@@ -354,6 +378,7 @@ class reference:
     def addAi(self, spawn_x_ref, spawn_y_block) -> None:
         self.moving['ai'].append(
             ai(self, self.block_x, hitbox(
+                self,
                 'ai',
                 spawn_x_ref,
                 spawn_y_block*self.block_y,

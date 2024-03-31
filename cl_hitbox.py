@@ -6,10 +6,12 @@ d_max_jump = 3 # depuis la dernière plateforme
 d_tick_delay_jump = 22
 
 class hitbox:
-    def __init__ (self, hitboxType:str, reference_x:int, reference_y:int, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg:list=None, canJump:bool=False, gapX:float=0) :
+    def __init__ (self, ref, hitboxType:str, reference_x:int, reference_y:int, size_x:float, size_y:float, color:tuple = (0, 0, 0), srcImg:list=None, canJump:bool=False, gapX:float=0, spawnPoint:bool=False) :
         
         """
         Initialise une instance de la classe 'hitbox'.
+
+        :param game_reference: Objet du référentiel stockant cette hitbox
 
         :param hitboxType: Quel objet du jeu cette hitbox est censé représenter ?
         :type hitboxType: String
@@ -36,6 +38,8 @@ class hitbox:
         :type gapX: Floating
         """
 
+        self.game_reference = ref
+
         self.start_x = reference_x # DEBUG
         self.start_y = reference_y # DEBUG
         self.size_x = int(size_x)
@@ -48,6 +52,7 @@ class hitbox:
         self.reference_y = reference_y
 
         self.type = hitboxType
+        self.spawnPoint = spawnPoint
 
         self.canJump = canJump
         self.tick_start_jump = -1
@@ -155,6 +160,10 @@ class hitbox:
     def smartShowObject(self, screen, pixel_x, block_y):
         self.start_x = pixel_x + self.gapX
         self.start_y = self.reference_y * block_y - block_y/2
+
+        if self.spawnPoint: 
+            self.lookDirection = 1 if (self.game_reference.currentSpawnPoint == self.reference_x) else 0
+
         self.affiche(screen)
     
     def isDeath(self, PYGAME_HEIGHT):

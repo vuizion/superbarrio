@@ -29,8 +29,8 @@ clock = pygame.time.Clock()
 
 # On créé nos objets
 Game = reference(multiplayer, SCREEN_RATIO)
-Game.add_moving_as('playable', hitbox('playable', PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p1r.png", "img/p1l.png"], True))
-if multiplayer : Game.add_moving_as('playable', hitbox('playable', PYGAME_WIDTH/5, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p2r.png", "img/p2l.png"], True))
+Game.add_moving_as('playable', hitbox(Game, 'playable', PYGAME_WIDTH/12, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p1r.png", "img/p1l.png"], True))
+if multiplayer : Game.add_moving_as('playable', hitbox(Game, 'playable', PYGAME_WIDTH/5, (PYGAME_HEIGHT/3)*1.8, PYGAME_WIDTH*0.065, PYGAME_HEIGHT*0.1, (0, 0, 255), ["img/p2r.png", "img/p2l.png"], True))
 # Game.add_fixed_as('solid', hitbox((PYGAME_WIDTH/3*2), (PYGAME_HEIGHT - PYGAME_HEIGHT/2.6), PYGAME_WIDTH/9, PYGAME_HEIGHT*0.2, (120, 120, 120), ["img/spike.png"]))
 
 
@@ -41,16 +41,16 @@ case_height = PYGAME_HEIGHT/8
 
 # ATH
 # Game.add_ath_as('text', hitbox((PYGAME_WIDTH/2), (PYGAME_HEIGHT/2.6), 2*case_width, 2*case_height, (120, 120, 120), ["img/spike.png"]))
-Game.add_ath_as('background', hitbox('background', 0, 0 , 10*case_width, 8*case_height, (120, 120, 120), ["img/bg.png"]))
+Game.add_ath_as('background', hitbox(Game, 'background', 0, 0 , 10*case_width, 8*case_height, (120, 120, 120), ["img/bg.png"]))
 
-Game.add_ath_as('heart', hitbox('heart', 0.2*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-Game.add_ath_as('heart', hitbox('heart', 0.8*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-Game.add_ath_as('heart', hitbox('heart', 1.4*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+Game.add_ath_as('heart', hitbox(Game, 'heart', 0.2*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+Game.add_ath_as('heart', hitbox(Game, 'heart', 0.8*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+Game.add_ath_as('heart', hitbox(Game, 'heart', 1.4*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 
 if multiplayer :
-    Game.add_ath_as('heart', hitbox('heart', 8.1*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-    Game.add_ath_as('heart', hitbox('heart', 8.7*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
-    Game.add_ath_as('heart', hitbox('heart', 9.3*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox(Game, 'heart', 8.1*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox(Game, 'heart', 8.7*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
+    Game.add_ath_as('heart', hitbox(Game, 'heart', 9.3*case_width, 0.2*case_height, 0.5*case_width, 0.5*case_height, (120, 120, 120), ["img/heart.png"]))
 
 
 
@@ -64,13 +64,6 @@ bg = pygame.transform.scale(bg, (10*case_width, 8*case_height)) # Redimensionner
 running = True
 tick = 0
 
-
-"""
-# test de l'ia
-Game.addAi(8, 6)
-Game.addAi(7, 6)
-Game.addAi(6, 6)
-"""
 
 
 ###########################
@@ -95,6 +88,11 @@ while running:
 
 
 
+    # Bouton de respawn
+    if keys[pygame.K_r]:
+        Game.callRespawn()
+
+
 
 
     ########################
@@ -111,8 +109,7 @@ while running:
 
     # Si la touche fléchée bas est pressée, déplacer le carré vers le bas
     if keys[pygame.K_s]:
-        if Game.goDown(Game.get_moving_as('playable')[0]):
-            Game.get_moving_as('playable')[0].move_start_y(PYGAME_SPEED)
+        Game.movePlayer(0,'b')
 
     if (keys[pygame.K_SPACE] or keys[pygame.K_z]):
         Game.movePlayer(0,'h', tick)
@@ -133,8 +130,7 @@ while running:
 
     # Si la touche fléchée bas est pressée, déplacer le carré vers le bas
     if keys[pygame.K_DOWN] and multiplayer:
-        if Game.goDown(Game.get_moving_as('playable')[1]):
-            Game.get_moving_as('playable')[1].move_start_y(PYGAME_SPEED)
+        Game.movePlayer(1,'b')
 
     if (keys[pygame.K_UP] or keys[pygame.K_RSHIFT] or keys[pygame.K_KP0]) and multiplayer:
         Game.movePlayer(1,'h', tick)
