@@ -50,7 +50,7 @@ class reference:
                     [0, 0, 0, 0, 0, 0, 4.2, 0, 0]]
 
         self.currentSpawnPoint = 6
-        self.canRespawn = True
+        self.canRespawn = False
         
         self.obstacle = obstacle()
         self.add_obstacle()
@@ -147,6 +147,9 @@ class reference:
                 isFalling = False
 
             if not oneMoving.check_jump_without_num(currentTick):
+                isFalling = False
+
+            if oneMoving.isOutsideMap():
                 isFalling = False
 
 
@@ -284,7 +287,7 @@ class reference:
         for player in self.moving['playable']:
             if player.isDeath(self.PYGAME_HEIGHT):
                 if player.get_remainingLife() >= 1 :
-                    player.relive(self.PYGAME_HEIGHT)
+                    self.canRespawn = True
                 else :
                     pass
                     #print("C'est finit tu es mort")

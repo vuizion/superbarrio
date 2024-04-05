@@ -59,6 +59,7 @@ class hitbox:
         self.tick_end_jump = -1
         self.num_jump = d_max_jump
         self.remainingLife = d_max_life
+        self.outsideMap = False # Si le personnnage meurt, on le "sort" de la map
 
         self.lookDirection = 0
         """
@@ -149,6 +150,8 @@ class hitbox:
                 self.move_start_y(jumpSpeed)
 
     def affiche(self, screen):
+        if self.canJump:
+            print(self.start_x)
 
         if self.srcImg == None :
             pygame.draw.rect(screen, self.color, (self.start_x, self.start_y, self.size_x, self.size_y))
@@ -167,13 +170,18 @@ class hitbox:
         self.affiche(screen)
     
     def isDeath(self, PYGAME_HEIGHT):
-        if self.start_y >= PYGAME_HEIGHT*1.2:
+        if not self.isOutsideMap() and (self.start_y >= PYGAME_HEIGHT*1.2):
             self.remainingLife -= 1
+            self.start_y -= PYGAME_HEIGHT*0.1
+            self.outsideMap = True
             return True
         return False
+    
+    def isOutsideMap(self):
+        return self.outsideMap
 
     def relive(self, PYGAME_HEIGHT) :
-        self.start_y = PYGAME_HEIGHT*0.2
+        self.start_y = self.ref.self.block_y * 4
         self.num_jump = d_max_jump
 
     def alive(self):
