@@ -6,7 +6,7 @@ from cl_hitbox import hitbox
 from cl_reference import reference
 
 
-# Initialiser pygame
+# Initialiser pygame 
 pygame.init()
 
 SCREEN_RATIO = 1
