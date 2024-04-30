@@ -174,9 +174,6 @@ class hitbox:
             self.outsideMap = True
             return True
         return False
-    
-    def isOutsideMap(self):
-        return self.outsideMap
 
     def relive(self, PYGAME_HEIGHT) :
         if self.remainingLife >= 1:
@@ -188,8 +185,16 @@ class hitbox:
     def alive(self):
         """
         Renvoit un booléan VRAI si le personnege est encore en vie
+        Cela ne veut pas dire qu'il est forcément dans le jeu :
+        - Utilisez dans ce cas isOutsideMap()
         """
         return self.remainingLife >= 1
+    
+    def isOutsideMap(self):
+        """
+        Renvoit un booléen VRAI si le personnage est visible à l'écran, sinon FAUX
+        """
+        return self.outsideMap
     
     def aiShow(self, screen, pixel_x):
         self.start_x = pixel_x
