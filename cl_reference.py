@@ -1,4 +1,4 @@
-# Importer nos classes (cl)
+# Importer nos classes (cl) 
 from cl_obstacle import obstacle
 from cl_hitbox import hitbox
 from cl_ai import ai

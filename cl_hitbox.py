@@ -1,6 +1,6 @@
 import pygame
 
-# Variable de capacité (par défaut)
+# Variable de capacité (par défaut) 
 d_max_life = 3 # Vies au totales
 d_max_jump = 3 # depuis la dernière plateforme
 d_tick_delay_jump = 22

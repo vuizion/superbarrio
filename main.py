@@ -1,4 +1,4 @@
-# Importer les bibliothèques
+# Importer les bibliothèques 
 import pygame
 
 # Importer nos classes (cl)
