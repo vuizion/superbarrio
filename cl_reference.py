@@ -268,7 +268,12 @@ class reference:
     def callRespawn(self):
         if self.canRespawn:
             self.canRespawn = False
+                
             self.scrollMapToSpawnPoint()
+
+            # On fait revivre tous les joueurs, même ceux qui ne sont pas mort, évidement ils ne perdents pas de coeurs.
+            for player in self.moving['playable']:
+                player.relive(self.PYGAME_HEIGHT)
 
     def scrollMapToSpawnPoint(self):
         dist = (self.currentSpawnPoint - self.leftColumn - 4)*self.block_x + self.leftColumnPixel
@@ -277,7 +282,7 @@ class reference:
 
         dist = abs(dist)-self.block_x/10
         if dist < 0:
-            self.canRespawn = True
+            self.canRespawn = False
         else :
             self.scrollMapToSpawnPoint()
         

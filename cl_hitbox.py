@@ -150,8 +150,6 @@ class hitbox:
                 self.move_start_y(jumpSpeed)
 
     def affiche(self, screen):
-        if self.canJump:
-            print(self.start_x)
 
         if self.srcImg == None :
             pygame.draw.rect(screen, self.color, (self.start_x, self.start_y, self.size_x, self.size_y))
@@ -181,8 +179,11 @@ class hitbox:
         return self.outsideMap
 
     def relive(self, PYGAME_HEIGHT) :
-        self.start_y = self.ref.self.block_y * 4
-        self.num_jump = d_max_jump
+        if self.remainingLife >= 1:
+            self.start_y = self.game_reference.block_y * 4
+            self.start_x = self.game_reference.block_x * 4
+            self.num_jump = d_max_jump
+            self.outsideMap = False
 
     def alive(self):
         """
