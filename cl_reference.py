@@ -55,9 +55,33 @@ class reference:
         self.obstacle = obstacle()
         self.add_obstacle()
 
+        self.createAth()
+
+
+
     def getScore(self):
         self.score = self.scoreDistance + self.scoreAi
         return str(self.score)
+    
+    def createAth(self):
+        """
+        Créer des objet PYGAME des aths, pour ensuite les affichers
+        """
+        self.add_ath_as('heart', hitbox(self, 'heart', 0.2*self.block_x, 0.2*self.block_y, 0.5*self.block_x, 0.5*self.block_y, (120, 120, 120), ["img/heart.png"]))
+        self.add_ath_as('heart', hitbox(self, 'heart', 0.8*self.block_x, 0.2*self.block_y, 0.5*self.block_x, 0.5*self.block_y, (120, 120, 120), ["img/heart.png"]))
+        self.add_ath_as('heart', hitbox(self, 'heart', 1.4*self.block_x, 0.2*self.block_y, 0.5*self.block_x, 0.5*self.block_y, (120, 120, 120), ["img/heart.png"]))
+
+        if self.multiplayer :
+            self.add_ath_as('heart', hitbox(self, 'heart', 8.1*self.block_x, 0.2*self.block_y, 0.5*self.block_x, 0.5*self.block_y, (120, 120, 120), ["img/heart.png"]))
+            self.add_ath_as('heart', hitbox(self, 'heart', 8.7*self.block_x, 0.2*self.block_y, 0.5*self.block_x, 0.5*self.block_y, (120, 120, 120), ["img/heart.png"]))
+            self.add_ath_as('heart', hitbox(self, 'heart', 9.3*self.block_x, 0.2*self.block_y, 0.5*self.block_x, 0.5*self.block_y, (120, 120, 120), ["img/heart.png"]))
+
+    
+    def showAth(self):
+        """
+        Afficher les éléments d'ATH nécessaires sur l'écran de jeu
+        """
+        pass
 
     def showCurrentElement(self, PYGAME_WIDTH, screen, tick, PYGAME_SPEED) :
         everyObject = []
